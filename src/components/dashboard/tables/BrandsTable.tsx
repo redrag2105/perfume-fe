@@ -24,11 +24,11 @@ export default function BrandsTable({ brands, searchQuery, onAdd, onEdit, onDele
           <h2 className="text-sm font-medium tracking-widest uppercase text-gray-900 dark:text-white">
             Maison Registry
           </h2>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Manage luxury fragrance houses</p>
+          <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">Manage luxury fragrance houses</p>
         </div>
         <button
           onClick={onAdd}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 dark:bg-white text-gray-100 dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors cursor-pointer"
         >
           <Plus size={14} strokeWidth={1.5} />
           <span className="text-[10px] tracking-[0.15em] uppercase font-medium">Add Maison</span>
@@ -40,10 +40,10 @@ export default function BrandsTable({ brands, searchQuery, onAdd, onEdit, onDele
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Brand Name
               </th>
-              <th className="px-6 py-4 text-right text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium w-32">
+              <th className="px-6 py-4 text-right text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium w-32">
                 Actions
               </th>
             </tr>
@@ -65,7 +65,7 @@ export default function BrandsTable({ brands, searchQuery, onAdd, onEdit, onDele
             ) : filteredBrands.length === 0 ? (
               <tr>
                 <td colSpan={2} className="px-6 py-12 text-center">
-                  <p className="text-sm text-gray-400 dark:text-gray-500 italic">No maisons found</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-400 italic">No maisons found</p>
                 </td>
               </tr>
             ) : (

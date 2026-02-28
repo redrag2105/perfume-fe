@@ -26,11 +26,11 @@ export default function PerfumesTable({ perfumes, searchQuery, onAdd, onEdit, on
           <h2 className="text-sm font-medium tracking-widest uppercase text-gray-900 dark:text-white">
             Fragrance Collection
           </h2>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Manage the perfume catalog</p>
+          <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">Manage the perfume catalog</p>
         </div>
         <button
           onClick={onAdd}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors cursor-pointer"
         >
           <Plus size={14} strokeWidth={1.5} />
           <span className="text-[10px] tracking-[0.15em] uppercase font-medium">Add Fragrance</span>
@@ -42,19 +42,19 @@ export default function PerfumesTable({ perfumes, searchQuery, onAdd, onEdit, on
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Fragrance
               </th>
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Maison
               </th>
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Price
               </th>
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Type
               </th>
-              <th className="px-6 py-4 text-right text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium w-32">
+              <th className="px-6 py-4 text-right text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium w-32">
                 Actions
               </th>
             </tr>
@@ -79,7 +79,7 @@ export default function PerfumesTable({ perfumes, searchQuery, onAdd, onEdit, on
             ) : filteredPerfumes.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center">
-                  <p className="text-sm text-gray-400 dark:text-gray-500 italic">No fragrances found</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-400 italic">No fragrances found</p>
                 </td>
               </tr>
             ) : (
@@ -93,14 +93,14 @@ export default function PerfumesTable({ perfumes, searchQuery, onAdd, onEdit, on
                       {perfume.perfumeName || perfume.name}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{perfume.brandName}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">{perfume.brandName}</td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white tabular-nums">${perfume.price}</td>
                   <td className="px-6 py-4">
                     <span
                       className={`inline-block px-2 py-1 text-[9px] tracking-widest uppercase ${
                         perfume.concentration === 'Extrait'
-                          ? 'bg-[#D4AF37]/10 text-[#B8860B] dark:bg-[#D4AF37]/20 dark:text-[#D4AF37]'
-                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                          ? 'bg-[#D4AF37]/10 text-[#B8860B] dark:bg-[#FFD700]/20 dark:text-[#FFD700]'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
                       }`}
                     >
                       {perfume.concentration}

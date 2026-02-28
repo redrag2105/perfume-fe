@@ -44,7 +44,7 @@ export default function Pagination({ pagination, onPageChange, itemLabel = 'item
               className={cn(
                 "w-8 h-8 text-xs transition-colors cursor-pointer",
                 page === pagination.currentPage
-                  ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
+                  ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
               )}
             >

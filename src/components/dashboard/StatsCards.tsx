@@ -35,7 +35,7 @@ export default function StatsCards({
       label: 'Fragrances',
       value: perfumesCount,
       icon: Package,
-      accent: 'text-[#D4AF37]',
+      accent: 'text-[#D4AF37] dark:text-[#FFD700]',
       highlight: true,
     },
     {

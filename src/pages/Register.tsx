@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import api from '../api/axios';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
+import { DropdownSelect } from '@/components/dashboard/dialogs/components';
+import { validateRegisterForm, isRegisterFormValid } from '@/lib/validation';
+
+const currentYear = new Date().getFullYear();
+
+const genderOptions = [
+  { value: 'true', label: 'Male' },
+  { value: 'false', label: 'Female' },
+];
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -12,11 +21,28 @@ export default function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  const errors = useMemo(() => 
+    validateRegisterForm(formData.name, formData.email, formData.password, formData.YOB), 
+    [formData]
+  );
+  
+  const isFormValid = isRegisterFormValid(errors);
+
+  // After first submit, button is disabled until form is valid
+  const isButtonDisabled = isSubmitting || (hasSubmitted && !isFormValid);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setHasSubmitted(true);
+    
+    if (!isFormValid) return;
+    
     setError('');
+    setIsSubmitting(true);
     try {
       await api.post('/auth/register', {
         ...formData,
@@ -30,14 +56,19 @@ export default function Register() {
       } else {
         setError('Failed to register');
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  // Show errors only after first submission
+  const showError = (field: keyof typeof errors) => hasSubmitted && errors[field];
 
   return (
     <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center p-4 bg-white">
       <div className="w-full max-w-sm space-y-8">
         
-        {/* Elegant Header */}
+        {/* Header */}
         <div className="space-y-2 text-center">
           <h1 className="text-4xl font-serif tracking-tight text-primary">Create Account</h1>
           <p className="text-sm text-muted-foreground tracking-wide">Join the Aura community</p>
@@ -56,11 +87,13 @@ export default function Register() {
               <Input 
                 type="text" 
                 placeholder="Full Name" 
-                required 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="h-12 px-0 border-0 border-b border-gray-300 focus-visible:ring-0 focus-visible:border-black rounded-none bg-transparent placeholder:text-gray-400"
+                className={`h-12 px-0 border-0 border-b focus-visible:ring-0 rounded-none bg-transparent placeholder:text-gray-400 transition-colors ${showError('name') ? 'border-red-500 focus-visible:border-red-500' : 'border-gray-300 focus-visible:border-black'}`}
               />
+              {showError('name') && (
+                <p className="mt-1 text-xs text-red-500">{errors.name}</p>
+              )}
             </div>
 
             {/* Email */}
@@ -68,30 +101,36 @@ export default function Register() {
               <Input 
                 type="email" 
                 placeholder="Email Address" 
-                required 
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="h-12 px-0 border-0 border-b border-gray-300 focus-visible:ring-0 focus-visible:border-black rounded-none bg-transparent placeholder:text-gray-400"
+                className={`h-12 px-0 border-0 border-b focus-visible:ring-0 rounded-none bg-transparent placeholder:text-gray-400 transition-colors ${showError('email') ? 'border-red-500 focus-visible:border-red-500' : 'border-gray-300 focus-visible:border-black'}`}
               />
+              {showError('email') && (
+                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+              )}
             </div>
             
             {/* Password with toggle */}
-            <div className="relative">
-              <Input 
-                type={showPassword ? "text" : "password"} 
-                placeholder="Password" 
-                required 
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="h-12 px-0 pr-10 border-0 border-b border-gray-300 focus-visible:ring-0 focus-visible:border-black rounded-none bg-transparent placeholder:text-gray-400"
-              />
-              <button
-                type="button"
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} strokeWidth={1.5} /> : <Eye size={18} strokeWidth={1.5} />}
-              </button>
+            <div>
+              <div className="relative">
+                <Input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="Password" 
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  className={`h-12 px-0 pr-10 border-0 border-b focus-visible:ring-0 rounded-none bg-transparent placeholder:text-gray-400 transition-colors ${showError('password') ? 'border-red-500 focus-visible:border-red-500' : 'border-gray-300 focus-visible:border-black'}`}
+                />
+                <button
+                  type="button"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} strokeWidth={1.5} /> : <Eye size={18} strokeWidth={1.5} />}
+                </button>
+              </div>
+              {showError('password') && (
+                <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+              )}
             </div>
 
             {/* Year of Birth & Gender in a row */}
@@ -101,28 +140,33 @@ export default function Register() {
                   type="number" 
                   placeholder="Year of Birth"
                   min="1900" 
-                  max="2026" 
-                  required 
+                  max={currentYear}
                   value={formData.YOB}
                   onChange={(e) => setFormData({...formData, YOB: e.target.value})}
-                  className="h-12 px-0 border-0 border-b border-gray-300 focus-visible:ring-0 focus-visible:border-black rounded-none bg-transparent placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className={`h-12 px-0 border-0 border-b focus-visible:ring-0 rounded-none bg-transparent placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-colors ${showError('YOB') ? 'border-red-500 focus-visible:border-red-500' : 'border-gray-300 focus-visible:border-black'}`}
                 />
+                {showError('YOB') && (
+                  <p className="mt-1 text-xs text-red-500">{errors.YOB}</p>
+                )}
               </div>
-              <div>
-                <select 
-                  value={formData.gender}
-                  onChange={(e) => setFormData({...formData, gender: e.target.value})}
-                  className="h-12 w-full px-0 border-0 border-b border-gray-300 focus:ring-0 focus:border-black outline-none rounded-none bg-transparent text-sm text-gray-600"
-                >
-                  <option value="true">Male</option>
-                  <option value="false">Female</option>
-                </select>
-              </div>
+              
+              {/* Gender Dropdown */}
+              <DropdownSelect
+                value={formData.gender}
+                options={genderOptions}
+                onChange={(value) => setFormData({...formData, gender: value})}
+                variant="underline"
+                placeholder="Select Gender"
+              />
             </div>
           </div>
 
-          <Button className="w-full h-12 text-sm tracking-widest uppercase mt-4" type="submit">
-            Create Account
+          <Button 
+            className="w-full h-12 text-sm tracking-widest uppercase mt-4" 
+            type="submit"
+            disabled={isButtonDisabled}
+          >
+            {isSubmitting ? 'Creating...' : 'Create Account'}
           </Button>
           
           <div className="text-center mt-6">

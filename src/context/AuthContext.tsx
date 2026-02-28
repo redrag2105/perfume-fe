@@ -63,6 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           // Silently fail - user will just see "Account" instead of their name
         });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.memberId]);
 
   const login = (token: string) => {

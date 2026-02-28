@@ -18,7 +18,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isAdminRoute = location.pathname === '/admin';
 
-  // Don't show navbar/footer on admin dashboard
   if (isAdminRoute) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col font-sans transition-colors duration-300">

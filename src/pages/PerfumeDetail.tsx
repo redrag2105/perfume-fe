@@ -7,7 +7,6 @@ import { ChevronLeft } from 'lucide-react';
 import ReviewCard from '../components/ReviewCard';
 import ReviewForm from '../components/ReviewForm';
 
-// TypeScript Interfaces based on your Backend Models
 interface Comment {
   _id: string;
   rating: number;

@@ -21,7 +21,7 @@ export default function MembersTable({ members, searchQuery, isLoading = false }
         <h2 className="text-sm font-medium tracking-widest uppercase text-gray-900 dark:text-white">
           Client Directory
         </h2>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+        <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
           View-only access to registered collectors
         </p>
       </div>
@@ -31,19 +31,19 @@ export default function MembersTable({ members, searchQuery, isLoading = false }
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Name
               </th>
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Email
               </th>
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Birth Year
               </th>
-              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-left text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Gender
               </th>
-              <th className="px-6 py-4 text-right text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-500 font-medium">
+              <th className="px-6 py-4 text-right text-[9px] tracking-[0.2em] uppercase text-gray-400 dark:text-gray-400 font-medium">
                 Status
               </th>
             </tr>
@@ -63,7 +63,7 @@ export default function MembersTable({ members, searchQuery, isLoading = false }
             ) : filteredMembers.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center">
-                  <p className="text-sm text-gray-400 dark:text-gray-500 italic">No clients found</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-400 italic">No clients found</p>
                 </td>
               </tr>
             ) : (
@@ -73,15 +73,15 @@ export default function MembersTable({ members, searchQuery, isLoading = false }
                   className="border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
                 >
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{member.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{member.email}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 tabular-nums">{member.YOB}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 capitalize">
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">{member.email}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 tabular-nums">{member.YOB}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 capitalize">
                     {member.gender ? 'Male' : 'Female'}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <span
                       className={`text-[9px] tracking-[0.15em] uppercase font-medium ${
-                        member.isAdmin ? 'text-[#D4AF37]' : 'text-gray-400 dark:text-gray-500'
+                        member.isAdmin ? 'text-[#D4AF37] dark:text-[#FFD700]' : 'text-gray-400 dark:text-gray-400'
                       }`}
                     >
                       {member.isAdmin ? 'Admin' : 'Client'}

@@ -9,7 +9,6 @@ export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -26,7 +25,6 @@ export default function UserDropdown() {
     navigate('/');
   };
 
-  // Get display name - use first name only for a cleaner look
   const getDisplayName = () => {
     if (!user?.name) return 'Account';
     const firstName = user.name.split(' ')[0];
@@ -58,7 +56,7 @@ export default function UserDropdown() {
           isOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
         }`}
       >
-        {/* Decorative top line - expands from center */}
+        {/* Decorative top line */}
         <span
           className={`absolute -top-px left-1/2 -translate-x-1/2 h-px bg-black/35 transition-all duration-300 ease-out ${
             isOpen ? 'w-[calc(100%-2rem)]' : 'w-0'

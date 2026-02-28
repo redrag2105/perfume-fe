@@ -119,18 +119,6 @@
     --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* @layer base {
-  * {
-    @apply border-border outline-ring/50;
-    }
-  body {
-    @apply font-sans bg-background text-foreground;
-    }
-  html {
-    @apply font-sans;
-    }
-} */
-
 @layer base {
   :root {
     /* Pure white and deep charcoal for a stark, editorial contrast */
@@ -171,7 +159,6 @@
 }
 
 @layer components {
-  /* 🌟 REFINED EXTRAIT GOLD FOIL DESIGN 🌟 */
   .extrait-card {
     @apply relative transition-all duration-500 ease-in-out;
     border: 1px solid #E8D399; /* Subtle gold line */
@@ -188,7 +175,6 @@
     color: #4A3B12;
     background: linear-gradient(135deg, #F9F1D8 0%, #E8D399 100%);
     border: 1px solid #D4AF37;
-    /* Removed the tacky neon glow, replaced with a subtle stamped look */
     box-shadow: inset 0 1px 2px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.05);
   }
 }
@@ -249,4 +235,93 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: #B8860B #FAF8F3;
+}
+
+/* Dark mode scrollbar */
+.dark::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  border-left: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg, 
+    #D4AF37 0%,
+    #C9A432 20%, 
+    #BE9A2D 50%, 
+    #B39028 80%,
+    #A88623 100%
+  );
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 230, 150, 0.2),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.dark::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg, 
+    #E0BD45 0%,
+    #D4AF37 20%, 
+    #C9A432 50%, 
+    #BE9A2D 80%,
+    #B39028 100%
+  );
+}
+
+.dark::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    180deg, 
+    #C9A432 0%,
+    #BE9A2D 50%, 
+    #B39028 100%
+  );
+}
+
+.dark *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  border-left: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg, 
+    #D4AF37 0%,
+    #C9A432 20%, 
+    #BE9A2D 50%, 
+    #B39028 80%,
+    #A88623 100%
+  );
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg, 
+    #E0BD45 0%,
+    #D4AF37 20%, 
+    #C9A432 50%, 
+    #BE9A2D 80%,
+    #B39028 100%
+  );
+}
+
+/* Firefox scrollbar for dark mode */
+.dark,
+.dark * {
+  scrollbar-width: thin;
+  scrollbar-color: #D4AF37 #1f2937;
 }

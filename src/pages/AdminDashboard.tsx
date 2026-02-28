@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useTheme } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import {
   DashboardSidebar,
@@ -23,7 +24,17 @@ import {
 
 export default function AdminDashboard() {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const isAdmin = user?.isAdmin ?? false;
+
+  // Compute effective theme for scoped dark mode
+  const isDark = useMemo(() => {
+    if (theme === 'dark') return true;
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  }, [theme]);
 
   // Use the dashboard data hook
   const {
@@ -61,10 +72,18 @@ export default function AdminDashboard() {
   });
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Load data when tab changes
+  // Load initial tab data on mount
   useEffect(() => {
-    loadTabData(activeTab);
-  }, [activeTab, loadTabData]);
+    loadTabData('members');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handle tab change - sets tab, resets search, and loads data
+  const handleTabChange = useCallback((tab: DashboardTab) => {
+    setActiveTab(tab);
+    setSearchQuery('');
+    loadTabData(tab);
+  }, [loadTabData]);
 
   // --- BRAND HANDLERS ---
   const openBrandDialog = useCallback((brand?: Brand) => {
@@ -112,11 +131,14 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-gray-950 transition-colors duration-300">
+    <div className={cn(
+      "h-screen overflow-y-auto bg-[#FAFAFA] dark:bg-gray-950 transition-colors duration-300",
+      isDark && "dark"
+    )}>
       {/* Sidebar */}
       <DashboardSidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         stats={{
           members: stats.membersCount,
           brands: stats.brandsCount,

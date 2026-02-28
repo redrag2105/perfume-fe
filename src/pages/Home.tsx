@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Define our TypeScript interface
 interface Perfume {
   _id: string;
   perfumeName: string;
@@ -90,7 +89,6 @@ export default function Home() {
   const handlePageChange = (page: number) => {
     if (page === pagination.currentPage) return;
     fetchPerfumes(page, searchedTerm, brandFilter);
-    // Scroll to top of grid smoothly
     window.scrollTo({ top: 200, behavior: 'smooth' });
   };
 
@@ -125,7 +123,7 @@ export default function Home() {
         resultsCount={pagination.totalCount}
       />
 
-      {/* The Luxury Grid */}
+      {/* Grid */}
       <div className="container mx-auto px-6">
         {isLoading ? (
           // Loading skeleton grid

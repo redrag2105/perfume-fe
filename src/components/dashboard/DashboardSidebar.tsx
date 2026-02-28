@@ -84,9 +84,9 @@ export default function DashboardSidebar({
           "flex items-center whitespace-nowrap",
           isCollapsed ? "justify-center" : "gap-2"
         )}>
-          <LayoutDashboard size={14} className="text-[#D4AF37] shrink-0" strokeWidth={1.5} />
+          <LayoutDashboard size={14} className="text-[#D4AF37] dark:text-[#FFD700] shrink-0" strokeWidth={1.5} />
           <span className={cn(
-            "text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-medium transition-all duration-500",
+            "text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] dark:text-[#FFD700] font-medium transition-all duration-500",
             isCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
           )}>
             Administration
@@ -111,8 +111,8 @@ export default function DashboardSidebar({
                 "w-full flex items-center transition-all duration-200 cursor-pointer group",
                 isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3",
                 isActive
-                  ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-gray-700 dark:bg-gray-100 text-white dark:text-gray-900'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
               )}
               title={isCollapsed ? item.label : undefined}
             >
@@ -123,7 +123,7 @@ export default function DashboardSidebar({
                 <item.icon 
                   size={16} 
                   strokeWidth={1.5} 
-                  className={cn("shrink-0", isActive ? 'text-[#D4AF37]' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300')} 
+                  className={cn("shrink-0", isActive ? 'text-[#c7961a] dark:text-[#8B6914]' : 'text-gray-400 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200')} 
                 />
                 <span className={cn(
                   "text-xs tracking-widest uppercase font-medium transition-all duration-300",
