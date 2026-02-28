@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import { useAuth } from '../hooks/useAuth';
 import api from '../api/axios';
 import { Input } from '@/components/ui/input';
@@ -46,6 +47,30 @@ export default function Login() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    setError('');
+    setIsSubmitting(true);
+    try {
+      const res = await api.post('/auth/google', { 
+        credential: credentialResponse.credential 
+      });
+      login(res.data.accessToken);
+      navigate('/');
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Google authentication failed.');
+      } else {
+        setError('Google authentication failed.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Google Sign-In was cancelled or failed.');
   };
 
   // Show errors only after first submission
@@ -113,6 +138,28 @@ export default function Login() {
           >
             {isSubmitting ? 'Signing In...' : 'Sign In'}
           </Button>
+
+          {/* Divider */}
+          <div className="relative mt-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-4 text-gray-400 tracking-widest">Or</span>
+            </div>
+          </div>
+
+          {/* Google Sign-In */}
+          <div className="flex justify-center mt-6">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              width="350"
+              text="signin_with"
+            />
+          </div>
           
           <div className="text-center mt-6">
             <p className="text-sm text-gray-500">
