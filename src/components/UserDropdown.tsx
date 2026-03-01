@@ -1,11 +1,11 @@
 import { useRef, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ChevronDown, Shield } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
+import SignOutDialog from '@/components/SignOutDialog';
 
 export default function UserDropdown() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -18,12 +18,6 @@ export default function UserDropdown() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handleLogout = () => {
-    logout();
-    setIsOpen(false);
-    navigate('/');
-  };
 
   const getDisplayName = () => {
     if (!user?.name) return 'Account';
@@ -71,12 +65,16 @@ export default function UserDropdown() {
           >
             {user.isAdmin ? 'Dashboard' : 'Your Profile'}
           </Link>
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-4 py-2.5 text-xs tracking-wide text-gray-600 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
-          >
-            Sign Out
-          </button>
+          <SignOutDialog
+            trigger={
+              <button
+                className="w-full text-left px-4 py-2.5 text-xs tracking-wide text-gray-600 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Sign Out
+              </button>
+            }
+            onSignOut={() => setIsOpen(false)}
+          />
         </div>
       </div>
     </div>

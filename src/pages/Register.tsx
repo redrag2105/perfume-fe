@@ -1,19 +1,15 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import api from '../api/axios';
+import { authApi } from '@/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import { DropdownSelect } from '@/components/dashboard/dialogs/components';
 import { validateRegisterForm, isRegisterFormValid } from '@/lib/validation';
+import { GENDER_OPTIONS } from '@/constants';
 
 const currentYear = new Date().getFullYear();
-
-const genderOptions = [
-  { value: 'true', label: 'Male' },
-  { value: 'false', label: 'Female' },
-];
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -44,8 +40,10 @@ export default function Register() {
     setError('');
     setIsSubmitting(true);
     try {
-      await api.post('/auth/register', {
-        ...formData,
+      await authApi.register({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
         YOB: parseInt(formData.YOB),
         gender: formData.gender === 'true'
       });
@@ -69,12 +67,12 @@ export default function Register() {
       <div className="w-full max-w-sm space-y-8">
         
         {/* Header */}
-        <div className="space-y-2 text-center">
+        <div className="space-y-2 text-center animate-slide-up">
           <h1 className="text-4xl font-serif tracking-tight text-primary">Create Account</h1>
           <p className="text-sm text-muted-foreground tracking-wide">Join the Aura community</p>
         </div>
 
-        <form onSubmit={handleRegister} className="space-y-6 mt-8">
+        <form onSubmit={handleRegister} className="space-y-6 mt-8 animate-slide-up animate-delay-200">
           {error && (
             <div className="p-3 text-xs tracking-wide text-center text-red-800 bg-red-50 border border-red-100">
               {error}
@@ -153,7 +151,7 @@ export default function Register() {
               {/* Gender Dropdown */}
               <DropdownSelect
                 value={formData.gender}
-                options={genderOptions}
+                options={GENDER_OPTIONS}
                 onChange={(value) => setFormData({...formData, gender: value})}
                 variant="underline"
                 placeholder="Select Gender"

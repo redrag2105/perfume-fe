@@ -1,6 +1,6 @@
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Perfume } from '../types';
+import type { Perfume } from '@/components/dashboard/types';
 
 interface PerfumesTableProps {
   perfumes: Perfume[];

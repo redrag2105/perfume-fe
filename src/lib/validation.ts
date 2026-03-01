@@ -75,6 +75,17 @@ export const validatePerfumeBrand = (brandId: string): string => {
   return '';
 };
 
+export const validatePerfumeDescription = (description: string): string => {
+  if (!description.trim()) return 'Description is required';
+  if (description.trim().length < 10) return 'Description must be at least 10 characters';
+  return '';
+};
+
+export const validatePerfumeIngredients = (ingredients: string): string => {
+  if (!ingredients.trim()) return 'Ingredients are required';
+  return '';
+};
+
 // Login form 
 export interface LoginFormErrors {
   email: string;
@@ -121,6 +132,8 @@ export interface PerfumeFormErrors {
   price: string;
   volume: string;
   brand: string;
+  description: string;
+  ingredients: string;
 }
 
 export const validatePerfumeForm = (form: {
@@ -129,14 +142,18 @@ export const validatePerfumeForm = (form: {
   price: string;
   volume: string;
   brand: string;
+  description: string;
+  ingredients: string;
 }): PerfumeFormErrors => ({
   perfumeName: validatePerfumeName(form.perfumeName),
   uri: validatePerfumeUri(form.uri),
   price: validatePerfumePrice(form.price),
   volume: validatePerfumeVolume(form.volume),
   brand: validatePerfumeBrand(form.brand),
+  description: validatePerfumeDescription(form.description),
+  ingredients: validatePerfumeIngredients(form.ingredients),
 });
 
 export const isPerfumeFormValid = (errors: PerfumeFormErrors): boolean => {
-  return !errors.perfumeName && !errors.uri && !errors.price && !errors.volume && !errors.brand;
+  return !errors.perfumeName && !errors.uri && !errors.price && !errors.volume && !errors.brand && !errors.description && !errors.ingredients;
 };

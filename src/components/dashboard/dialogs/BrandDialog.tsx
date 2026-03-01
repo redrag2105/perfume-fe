@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
-import { type Brand } from '../types';
+import { type Brand } from '@/components/dashboard/types';
 import { validateBrandName } from '@/lib/validation';
 
 interface BrandDialogProps {

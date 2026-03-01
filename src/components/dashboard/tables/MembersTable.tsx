@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Member } from '../types';
+import type { Member } from '@/components/dashboard/types';
 
 interface MembersTableProps {
   members: Member[];

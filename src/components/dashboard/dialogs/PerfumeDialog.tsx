@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
-import { type Perfume, type Brand, type PerfumeFormData, initialPerfumeForm } from '../types';
+import { type Perfume, type Brand, type PerfumeFormData, initialPerfumeForm } from '@/components/dashboard/types';
 import { validatePerfumeForm, isPerfumeFormValid } from '@/lib/validation';
 import { DropdownSelect, ImagePreview, FormField, TextAreaField } from './components';
 import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
@@ -201,6 +201,7 @@ export default function PerfumeDialog({ open, onClose, onSubmit, editingPerfume,
                   value={form.ingredients}
                   onChange={(v) => updateField('ingredients', v)}
                   placeholder="Rose, Oud, Vanilla..."
+                  error={showError('ingredients')}
                 />
 
                 <TextAreaField
@@ -209,6 +210,7 @@ export default function PerfumeDialog({ open, onClose, onSubmit, editingPerfume,
                   onChange={(v) => updateField('description', v)}
                   placeholder="Describe the fragrance..."
                   fullWidth
+                  error={showError('description')}
                 />
               </div>
             </div>
