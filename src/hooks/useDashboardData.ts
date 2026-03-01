@@ -223,5 +223,6 @@ export function useDashboardData(isAdmin: boolean) {
     handleDelete,
     fetchPerfumeDetails,
     ensureBrandsLoaded,
+    fetchPerfumesWithPage: fetchPerfumes,
   };
 }

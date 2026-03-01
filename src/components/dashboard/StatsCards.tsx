@@ -100,7 +100,7 @@ export default function StatsCards({
             </div>
           </div>
           {/* Bottom accent line */}
-          <div className={`h-px ${stat.highlight ? 'bg-[#D4AF37]/30' : 'bg-gray-100'}`} />
+          <div className={`h-px ${stat.highlight ? 'bg-[#D4AF37]' : 'bg-gray-100'}`} />
         </div>
       ))}
     </div>

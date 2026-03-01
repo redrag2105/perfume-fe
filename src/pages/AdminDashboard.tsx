@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
+import { useQueryState, parseAsStringLiteral, parseAsInteger, parseAsString } from 'nuqs';
 import { useAuth } from '@/hooks/useAuth';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useTheme } from '@/components/theme-provider';
@@ -22,10 +23,26 @@ import {
   type DashboardTab,
 } from '@/components/dashboard';
 
+const TABS = ['members', 'brands', 'perfumes'] as const;
+
 export default function AdminDashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
   const isAdmin = user?.isAdmin ?? false;
+
+  // URL State with nuqs
+  const [activeTab, setActiveTab] = useQueryState(
+    'tab',
+    parseAsStringLiteral(TABS).withDefault('members')
+  );
+  const [page, setPage] = useQueryState(
+    'page',
+    parseAsInteger.withDefault(1)
+  );
+  const [searchQuery, setSearchQuery] = useQueryState(
+    'q',
+    parseAsString.withDefault('')
+  );
 
   // Compute effective theme for scoped dark mode
   const isDark = useMemo(() => {
@@ -36,7 +53,7 @@ export default function AdminDashboard() {
     return false;
   }, [theme]);
 
-  // Use the dashboard data hook
+  // Use the dashboard data hook - pass page for perfumes pagination
   const {
     members,
     brands,
@@ -46,17 +63,15 @@ export default function AdminDashboard() {
     statsLoading,
     loadingStates,
     loadTabData,
-    handlePerfumePageChange,
     handleBrandSubmit,
     handlePerfumeSubmit,
     handleDelete,
     fetchPerfumeDetails,
     ensureBrandsLoaded,
+    fetchPerfumesWithPage,
   } = useDashboardData(isAdmin);
 
-  // UI State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<DashboardTab>('members');
+  // UI State (non-URL state)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Dialog States
@@ -72,18 +87,29 @@ export default function AdminDashboard() {
   });
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Load initial tab data on mount
+  // Load tab data when tab changes from URL
   useEffect(() => {
-    loadTabData('members');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    loadTabData(activeTab);
+  }, [activeTab, loadTabData]);
 
-  // Handle tab change - sets tab, resets search, and loads data
+  // Load perfumes when page changes (for perfumes tab)
+  useEffect(() => {
+    if (activeTab === 'perfumes' && page > 0) {
+      fetchPerfumesWithPage(page);
+    }
+  }, [activeTab, page, fetchPerfumesWithPage]);
+
+  // Handle tab change - sets tab, resets search and page
   const handleTabChange = useCallback((tab: DashboardTab) => {
     setActiveTab(tab);
     setSearchQuery('');
-    loadTabData(tab);
-  }, [loadTabData]);
+    setPage(1);
+  }, [setActiveTab, setSearchQuery, setPage]);
+
+  // Handle page change - update URL
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage);
+  }, [setPage]);
 
   // --- BRAND HANDLERS ---
   const openBrandDialog = useCallback((brand?: Brand) => {
@@ -157,8 +183,8 @@ export default function AdminDashboard() {
         {/* Header */}
         <DashboardHeader
           activeTab={activeTab}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          searchQuery={searchQuery || ''}
+          onSearchChange={(value) => setSearchQuery(value || null)}
         />
 
         {/* Content */}
@@ -177,7 +203,7 @@ export default function AdminDashboard() {
           {/* Tab Content */}
           {activeTab === 'members' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-              <MembersTable members={members} searchQuery={searchQuery} isLoading={loadingStates.members} />
+              <MembersTable members={members} searchQuery={searchQuery || ''} isLoading={loadingStates.members} />
             </div>
           )}
 
@@ -185,7 +211,7 @@ export default function AdminDashboard() {
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
               <BrandsTable
                 brands={brands}
-                searchQuery={searchQuery}
+                searchQuery={searchQuery || ''}
                 onAdd={() => openBrandDialog()}
                 onEdit={openBrandDialog}
                 onDelete={(id, name) => openDeleteDialog('brand', id, name)}
@@ -198,7 +224,7 @@ export default function AdminDashboard() {
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
               <PerfumesTable
                 perfumes={perfumes}
-                searchQuery={searchQuery}
+                searchQuery={searchQuery || ''}
                 onAdd={() => openPerfumeDialog()}
                 onEdit={openPerfumeDialog}
                 onDelete={(id, name) => openDeleteDialog('perfume', id, name)}
@@ -206,7 +232,7 @@ export default function AdminDashboard() {
               />
               <Pagination
                 pagination={perfumesPagination}
-                onPageChange={handlePerfumePageChange}
+                onPageChange={handlePageChange}
                 itemLabel="fragrances"
               />
             </div>

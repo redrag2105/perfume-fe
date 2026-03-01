@@ -1,18 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
+import { useInView } from 'react-intersection-observer';
 import { useAuth } from '@/hooks/useAuth';
 import { membersApi } from '@/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function Profile() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
+  // On-visit animations
+  const [headerRef, headerInView] = useInView({ triggerOnce: true, threshold: 0.3 });
+  const [leftRef, leftInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [rightRef, rightInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+
   // Profile Form State
   const [profileData, setProfileData] = useState({ name: '', YOB: '', gender: 'true' });
+  const [originalProfileData, setOriginalProfileData] = useState({ name: '', YOB: '', gender: 'true' });
   const [profileMsg, setProfileMsg] = useState({ type: '', text: '' });
 
   // Password Form State
@@ -27,11 +35,13 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const profile = await membersApi.getProfile();
-        setProfileData({
+        const data = {
           name: profile.name || '',
           YOB: profile.YOB?.toString() || '',
           gender: profile.gender === false ? 'false' : 'true',
-        });
+        };
+        setProfileData(data);
+        setOriginalProfileData(data);
       } catch (error) {
         console.error("Error fetching profile", error);
       } finally {
@@ -52,6 +62,7 @@ export default function Profile() {
         gender: profileData.gender === 'true'
       });
       setProfileMsg({ type: 'success', text: 'Personal details updated successfully.' });
+      setOriginalProfileData(profileData);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setProfileMsg({ type: 'error', text: err.response?.data?.message || 'Failed to update profile.' });
@@ -78,6 +89,14 @@ export default function Profile() {
     }
   };
 
+  // Check if profile data has changed
+  const profileHasChanges = profileData.name !== originalProfileData.name || 
+                            profileData.YOB !== originalProfileData.YOB || 
+                            profileData.gender !== originalProfileData.gender;
+
+  // Check if password fields are filled
+  const passwordHasChanges = passData.oldPassword.length > 0 && passData.newPassword.length > 0;
+
   // Protect this route: If not logged in, redirect to login
   if (!user) return <Navigate to="/login" replace />;
   
@@ -88,15 +107,15 @@ export default function Profile() {
       <div className="max-w-5xl mx-auto px-6">
         
         {/* Page Header */}
-        <div className="border-b border-gray-200 pb-8 mb-12">
-          <h1 className="text-4xl font-serif text-primary mb-2">My Maison</h1>
-          <p className="text-sm tracking-widest uppercase text-gray-500">Manage your account preferences</p>
+        <div ref={headerRef} className="border-b border-gray-200 pb-8 mb-12">
+          <h1 className={`text-4xl font-serif text-primary mb-2 ${headerInView ? 'animate-slide-up' : 'opacity-0'}`}>My Maison</h1>
+          <p className={`text-sm tracking-widest uppercase text-gray-500 ${headerInView ? 'animate-fade-in animate-delay-200' : 'opacity-0'}`}>Manage your account preferences</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
           
           {/* LEFT COLUMN: Personal Details */}
-          <div className="bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-shadow duration-500">
+          <div ref={leftRef} className={`bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-shadow duration-500 ${leftInView ? 'animate-slide-in-left' : 'opacity-0'}`}>
             <h2 className="text-sm font-semibold tracking-widest uppercase mb-8 text-black">Personal Details</h2>
             
             {profileMsg.text && (
@@ -130,25 +149,29 @@ export default function Profile() {
                 
                 <div className="space-y-1">
                   <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500">Gender</label>
-                  <select 
+                  <Select 
                     value={profileData.gender}
-                    onChange={(e) => setProfileData({...profileData, gender: e.target.value})}
-                    className="h-10 w-full px-0 border-0 border-b border-gray-300 focus:ring-0 focus:border-black outline-none rounded-none bg-transparent text-sm"
+                    onValueChange={(value) => setProfileData({...profileData, gender: value})}
                   >
-                    <option value="true">Male</option>
-                    <option value="false">Female</option>
-                  </select>
+                    <SelectTrigger className="h-10 w-full px-0 border-0 border-b border-gray-300 focus:ring-0 focus-visible:ring-0 focus-visible:border-black rounded-none bg-transparent text-sm shadow-none">
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Male</SelectItem>
+                      <SelectItem value="false">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-12 text-xs tracking-[0.2em] uppercase rounded-none bg-black hover:bg-gray-800">
+              <Button type="submit" disabled={!profileHasChanges} className="w-full h-12 text-xs tracking-[0.2em] uppercase rounded-none bg-black hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed">
                 Save Changes
               </Button>
             </form>
           </div>
 
           {/* RIGHT COLUMN: Security */}
-          <div className="bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-shadow duration-500">
+          <div ref={rightRef} className={`bg-white p-6 shadow-[0_2px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-shadow duration-500 ${rightInView ? 'animate-slide-in-right animate-delay-200' : 'opacity-0'}`}>
             <h2 className="text-sm font-semibold tracking-widest uppercase mb-8 text-black">Security</h2>
             
             {passMsg.text && (
@@ -191,7 +214,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <Button type="submit" variant="outline" className="w-full h-12 text-xs tracking-[0.2em] uppercase rounded-none border-black text-black hover:bg-black hover:text-white transition-colors">
+              <Button type="submit" disabled={!passwordHasChanges} variant="outline" className="w-full h-12 text-xs tracking-[0.2em] uppercase rounded-none border-black text-black hover:bg-black hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-black">
                 Update Password
               </Button>
             </form>

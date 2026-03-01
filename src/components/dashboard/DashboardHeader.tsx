@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import type { DashboardTab } from './types';
 
 interface DashboardHeaderProps {
@@ -49,8 +49,17 @@ export default function DashboardHeader({ activeTab, searchQuery, onSearchChange
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-56 pl-9 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-600 focus:outline-none focus:border-gray-400 dark:focus:border-gray-600 transition-colors"
+              className="w-56 pl-9 pr-8 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-600 focus:outline-none focus:border-gray-400 dark:focus:border-gray-600 transition-colors"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => onSearchChange('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+              >
+                <X size={14} strokeWidth={1.5} />
+              </button>
+            )}
           </div>
           {/* Admin Badge */}
           <div className="h-6 w-px bg-gray-200 dark:bg-gray-700" />

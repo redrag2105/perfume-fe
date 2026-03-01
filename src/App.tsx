@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './components/theme-provider';
 import { Toaster } from './components/ui/sonner';
@@ -41,30 +42,32 @@ function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="aura-theme">
       <BrowserRouter>
-        <AuthProvider>
-          <ScrollToTop />
-          <Toaster />
-          <Routes>
-            <Route path="/admin" element={
-              <RootLayout>
-                <AdminDashboard />
-              </RootLayout>
-            } />
-            <Route path="*" element={
-              <RootLayout>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/perfumes/:id" element={<PerfumeDetail />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </RootLayout>
-            } />
-          </Routes>
-        </AuthProvider>
+        <NuqsAdapter>
+          <AuthProvider>
+            <ScrollToTop />
+            <Toaster />
+            <Routes>
+              <Route path="/admin" element={
+                <RootLayout>
+                  <AdminDashboard />
+                </RootLayout>
+              } />
+              <Route path="*" element={
+                <RootLayout>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/perfumes/:id" element={<PerfumeDetail />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </RootLayout>
+              } />
+            </Routes>
+          </AuthProvider>
+        </NuqsAdapter>
       </BrowserRouter>
     </ThemeProvider>
   );

@@ -1,9 +1,11 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface GlassMagnifierProps {
   src: string;
   alt: string;
   magnification?: number;
+  minMagnification?: number;
+  maxMagnification?: number;
   glassSize?: number;
   className?: string;
 }
@@ -12,6 +14,8 @@ export default function GlassMagnifier({
   src,
   alt,
   magnification = 2.5,
+  minMagnification = 1,
+  maxMagnification = 5,
   glassSize = 150,
   className = '',
 }: GlassMagnifierProps) {
@@ -19,6 +23,7 @@ export default function GlassMagnifier({
   const [isHovering, setIsHovering] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [currentMagnification, setCurrentMagnification] = useState(magnification);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -31,8 +36,36 @@ export default function GlassMagnifier({
     setImageSize({ width: rect.width, height: rect.height });
   }, []);
 
-  const handleMouseEnter = useCallback(() => setIsHovering(true), []);
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
+    setCurrentMagnification(magnification); // Reset to default on enter
+  }, [magnification]);
+  
   const handleMouseLeave = useCallback(() => setIsHovering(false), []);
+
+  // Handle scroll wheel to adjust magnification
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!isHovering) return;
+      
+      // Prevent page scroll
+      e.preventDefault();
+      
+      // Scroll up (negative deltaY) = increase zoom, scroll down = decrease
+      const delta = e.deltaY > 0 ? -0.25 : 0.25;
+      
+      setCurrentMagnification(prev => {
+        const newMag = prev + delta;
+        return Math.min(maxMagnification, Math.max(minMagnification, newMag));
+      });
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, [isHovering, minMagnification, maxMagnification]);
 
   // Calculate background position for zoomed effect
   const bgPosX = (position.x / imageSize.width) * 100;
@@ -56,20 +89,26 @@ export default function GlassMagnifier({
 
       {/* Glass Magnifier */}
       {isHovering && (
-        <div
-          className="pointer-events-none absolute rounded-full border border-gray-200 shadow-lg overflow-hidden"
-          style={{
-            width: glassSize,
-            height: glassSize,
-            left: position.x - glassSize / 2,
-            top: position.y - glassSize / 2,
-            backgroundImage: `url(${src})`,
-            backgroundSize: `${imageSize.width * magnification}px ${imageSize.height * magnification}px`,
-            backgroundPosition: `${bgPosX}% ${bgPosY}%`,
-            backgroundRepeat: 'no-repeat',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.15), inset 0 0 30px rgba(255,255,255,0.1)',
-          }}
-        />
+        <>
+          <div
+            className="pointer-events-none absolute rounded-full border border-gray-200 shadow-lg overflow-hidden transition-[background-size] duration-100 ease-out"
+            style={{
+              width: glassSize,
+              height: glassSize,
+              left: position.x - glassSize / 2,
+              top: position.y - glassSize / 2,
+              backgroundImage: `url(${src})`,
+              backgroundSize: `${imageSize.width * currentMagnification}px ${imageSize.height * currentMagnification}px`,
+              backgroundPosition: `${bgPosX}% ${bgPosY}%`,
+              backgroundRepeat: 'no-repeat',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.15), inset 0 0 30px rgba(255,255,255,0.1)',
+            }}
+          />
+          {/* Zoom Level Indicator */}
+          <div className="pointer-events-none absolute bottom-4 right-4 px-2 py-1 bg-black/70 text-white text-[10px] tracking-widest uppercase">
+            {currentMagnification.toFixed(1)}x
+          </div>
+        </>
       )}
     </div>
   );

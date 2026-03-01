@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useQueryState, parseAsInteger, parseAsString } from 'nuqs';
+import { useInView } from 'react-intersection-observer';
 import { perfumesApi, brandsApi } from '@/api';
 import type { PerfumeListItem, PaginationInfo } from '@/types';
 import ProductCard from '@/components/ProductCard';
@@ -8,10 +10,19 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
+  // On-visit animations
+  const [headerRef, headerInView] = useInView({ triggerOnce: true, threshold: 0.3 });
+  const [gridRef, gridInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+
   const [perfumes, setPerfumes] = useState<PerfumeListItem[]>([]);
+  
+  // URL state with nuqs
+  const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1));
+  const [searchQuery, setSearchQuery] = useQueryState('q', parseAsString.withDefault(''));
+  const [brandQuery, setBrandQuery] = useQueryState('brand', parseAsString.withDefault(''));
+  
+  // Local UI state
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchedTerm, setSearchedTerm] = useState(''); // Tracks actually performed search
-  const [brandFilter, setBrandFilter] = useState('');
   const [availableBrands, setAvailableBrands] = useState<string[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
@@ -24,11 +35,11 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch perfumes with pagination
-  const fetchPerfumes = async (page = 1, search = '', brand = '') => {
+  const fetchPerfumes = useCallback(async (pageNum = 1, search = '', brand = '') => {
     try {
       setIsLoading(true);
       const data = await perfumesApi.getAll({
-        page,
+        page: pageNum,
         limit: 12,
         search: search || undefined,
         brandName: brand || undefined,
@@ -37,7 +48,7 @@ export default function Home() {
       setPagination(data.pagination);
       
       // Extract brands from the response for filtering
-      if (page === 1 && !search && !brand) {
+      if (pageNum === 1 && !search && !brand) {
         const brandsData = await brandsApi.getAll();
         const brands = brandsData.map(b => b.brandName);
         setAvailableBrands(brands);
@@ -47,55 +58,58 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Initial fetch
-  useEffect(() => {
-    fetchPerfumes();
   }, []);
 
+  // Fetch on URL state changes
+  useEffect(() => {
+    fetchPerfumes(page, searchQuery || '', brandQuery || '');
+    setSearchTerm(searchQuery || '');
+  }, [page, searchQuery, brandQuery, fetchPerfumes]);
+
   // Handle Search
-  const handleSearch = async (e?: React.FormEvent, selectedBrand: string = brandFilter) => {
+  const handleSearch = async (e?: React.FormEvent, selectedBrand: string = brandQuery || '') => {
     if (e) e.preventDefault();
-    await fetchPerfumes(1, searchTerm, selectedBrand);
-    setSearchedTerm(searchTerm);
+    setSearchQuery(searchTerm || null);
+    setBrandQuery(selectedBrand || null);
+    setPage(1);
   };
 
   const handleBrandSelect = (brand: string) => {
-    setBrandFilter(brand);
-    handleSearch(undefined, brand);
+    setBrandQuery(brand || null);
+    setSearchQuery(searchTerm || null);
+    setPage(1);
   };
 
-  const handlePageChange = (page: number) => {
-    if (page === pagination.currentPage) return;
-    fetchPerfumes(page, searchedTerm, brandFilter);
+  const handlePageChange = (newPage: number) => {
+    if (newPage === pagination.currentPage) return;
+    setPage(newPage);
     window.scrollTo({ top: 200, behavior: 'smooth' });
   };
 
-  const clearFilters = async () => {
+  const clearFilters = () => {
     setSearchTerm('');
-    setSearchedTerm('');
-    setBrandFilter('');
-    await fetchPerfumes(1, '', '');
+    setSearchQuery(null);
+    setBrandQuery(null);
+    setPage(1);
   };
 
-  const hasActiveFilters = searchTerm || brandFilter;
+  const hasActiveFilters = searchTerm || brandQuery;
 
   return (
     <div className="min-h-screen bg-white pb-24">
       
       {/* Editorial Header */}
-      <div className="py-12 md:py-16 text-center space-y-3">
-        <h1 className="text-4xl md:text-5xl font-serif tracking-tight text-primary">The Collection</h1>
-        <p className="text-xs md:text-sm text-muted-foreground tracking-[0.2em] uppercase">Discover your signature scent</p>
+      <div ref={headerRef} className="py-12 md:py-16 text-center space-y-3">
+        <h1 className={`text-4xl md:text-5xl font-serif tracking-tight text-primary ${headerInView ? 'animate-slide-up' : 'opacity-0'}`}>The Collection</h1>
+        <p className={`text-xs md:text-sm text-muted-foreground tracking-[0.2em] uppercase ${headerInView ? 'animate-fade-in animate-delay-200' : 'opacity-0'}`}>Discover your signature scent</p>
       </div>
 
       {/* Search & Filter */}
       <SearchFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        searchedTerm={searchedTerm}
-        brandFilter={brandFilter}
+        searchedTerm={searchQuery || ''}
+        brandFilter={brandQuery || ''}
         availableBrands={availableBrands}
         onBrandSelect={handleBrandSelect}
         onSearch={handleSearch}
@@ -133,7 +147,7 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-12 md:gap-y-16">
+            <div ref={gridRef} className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-12 md:gap-y-16 ${gridInView ? 'animate-fade-in animate-delay-100' : 'opacity-0'}`}>
               {perfumes.map((perfume, index) => (
                 <ProductCard key={perfume._id} perfume={perfume} index={index} />
               ))}
