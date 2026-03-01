@@ -1,25 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect, type ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import api from '../api/axios';
+import { membersApi } from '@/api';
+import type { DecodedToken, User, AuthContextType } from '@/types';
 
-export interface DecodedToken {
-  memberId: string;
-  isAdmin: boolean;
-  exp: number;
-}
-
-export interface User extends DecodedToken {
-  token: string;
-  name?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  login: (token: string) => void;
-  logout: () => void;
-  updateUserName: (name: string) => void;
-}
+// Re-export types for backward compatibility
+export type { DecodedToken, User } from '@/types';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -52,11 +38,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Fetch user name on initial load if logged in but no name
   useEffect(() => {
     if (user && !user.name) {
-      api.get('/members/profile')
-        .then(res => {
-          if (res.data.name) {
-            localStorage.setItem('userName', res.data.name);
-            setUser(prev => prev ? { ...prev, name: res.data.name } : null);
+      membersApi.getProfile()
+        .then(profile => {
+          if (profile.name) {
+            localStorage.setItem('userName', profile.name);
+            setUser(prev => prev ? { ...prev, name: profile.name } : null);
           }
         })
         .catch(() => {
@@ -72,11 +58,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser({ ...decoded, token });
     
     // Fetch name after login
-    api.get('/members/profile')
-      .then(res => {
-        if (res.data.name) {
-          localStorage.setItem('userName', res.data.name);
-          setUser(prev => prev ? { ...prev, name: res.data.name } : null);
+    membersApi.getProfile()
+      .then(profile => {
+        if (profile.name) {
+          localStorage.setItem('userName', profile.name);
+          setUser(prev => prev ? { ...prev, name: profile.name } : null);
         }
       })
       .catch(() => {});

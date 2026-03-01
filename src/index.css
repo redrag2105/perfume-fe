@@ -325,3 +325,66 @@
   scrollbar-width: thin;
   scrollbar-color: #D4AF37 #1f2937;
 }
+
+/* Luxury Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes slideInLeft {
+  from { 
+    opacity: 0; 
+    transform: translateX(-30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+@keyframes slideInRight {
+  from { 
+    opacity: 0; 
+    transform: translateX(30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.7s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s ease-out forwards;
+}
+
+/* Staggered delays for elegant reveals */
+.animate-delay-100 { animation-delay: 100ms; opacity: 0; }
+.animate-delay-200 { animation-delay: 200ms; opacity: 0; }
+.animate-delay-300 { animation-delay: 300ms; opacity: 0; }
+.animate-delay-400 { animation-delay: 400ms; opacity: 0; }
+.animate-delay-500 { animation-delay: 500ms; opacity: 0; }
+.animate-delay-600 { animation-delay: 600ms; opacity: 0; }

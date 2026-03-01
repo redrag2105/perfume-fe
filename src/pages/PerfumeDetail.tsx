@@ -1,46 +1,32 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../api/axios';
-import { useAuth } from '../hooks/useAuth';
+import { useInView } from 'react-intersection-observer';
+import { perfumesApi } from '@/api';
+import type { PerfumeDetail as PerfumeDetailType } from '@/types';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
-import ReviewCard from '../components/ReviewCard';
-import ReviewForm from '../components/ReviewForm';
-
-interface Comment {
-  _id: string;
-  rating: number;
-  content: string;
-  author: { _id: string; name: string };
-  createdAt: string;
-}
-
-interface PerfumeDetail {
-  _id: string;
-  perfumeName: string;
-  uri: string;
-  price: number;
-  concentration: string;
-  description: string;
-  ingredients: string;
-  volume: number;
-  targetAudience: string;
-  brand: { _id: string; brandName: string };
-  comments: Comment[];
-}
+import ReviewCard from '@/components/ReviewCard';
+import ReviewForm from '@/components/ReviewForm';
+import GlassMagnifier from '@/components/GlassMagnifier';
 
 export default function PerfumeDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   
-  const [perfume, setPerfume] = useState<PerfumeDetail | null>(null);
+  const [perfume, setPerfume] = useState<PerfumeDetailType | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Scroll animations
+  const [imageRef, imageInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [detailsRef, detailsInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [reviewsRef, reviewsInView] = useInView({ triggerOnce: true, threshold: 0.45 });
 
   // Fetch Perfume Details
   const fetchPerfume = useCallback(async () => {
     try {
-      const res = await api.get(`/perfumes/${id}`);
-      setPerfume(res.data);
+      const data = await perfumesApi.getById(id!);
+      setPerfume(data);
     } catch (error) {
       console.error("Error fetching perfume details", error);
     } finally {
@@ -96,14 +82,23 @@ export default function PerfumeDetail() {
       {/* Split Screen Layout */}
       <div className="container mx-auto px-6 pt-12 grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
         
-        {/* Left Side: Editorial Image */}
-        <div className={`group relative w-full aspect-4/5 flex items-center justify-center bg-[#F9F9F9] p-8 transition-all duration-500 hover:shadow-xl hover:bg-[#F5F5F5] ${isExtrait ? 'extrait-card' : ''}`}>
+        {/* Left Side: Editorial Image with Glass Magnifier */}
+        <div 
+          ref={imageRef}
+          className={`relative w-full aspect-4/5 flex items-center justify-center bg-[#F9F9F9] p-8 transition-shadow duration-500 hover:shadow-xl ${isExtrait ? 'extrait-card' : ''} ${imageInView ? 'animate-slide-in-left' : 'opacity-0'}`}
+        >
           {isExtrait && <span className="extrait-badge">Extrait</span>}
-          <img src={perfume.uri} alt={perfume.perfumeName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" />
+          <GlassMagnifier 
+            src={perfume.uri} 
+            alt={perfume.perfumeName} 
+            className="w-full h-full"
+            magnification={2.5}
+            glassSize={150}
+          />
         </div>
 
         {/* Right Side: Details & Typography */}
-        <div className="flex flex-col h-full justify-center md:py-12 space-y-8">
+        <div ref={detailsRef} className={`flex flex-col h-full justify-center md:py-12 space-y-8 ${detailsInView ? 'animate-slide-in-right animate-delay-200' : 'opacity-0'}`}>
           
           <div className="space-y-2 border-b border-gray-100 pb-8">
             <p className="text-xs uppercase tracking-[0.3em] text-gray-500">{perfume.brand?.brandName || 'Unknown Maison'}</p>
@@ -143,7 +138,7 @@ export default function PerfumeDetail() {
       </div>
 
       {/* Reviews Section */}
-      <div className="container mx-auto px-6 mt-32 border-t border-gray-100 pt-16 max-w-4xl">
+      <div ref={reviewsRef} className={`container mx-auto px-6 mt-32 border-t border-gray-100 pt-16 max-w-4xl ${reviewsInView ? 'animate-slide-up' : 'opacity-0'}`}>
         <h2 className="text-3xl font-serif text-center mb-12">Client Feedback</h2>
 
         {/* Write a Review Form */}

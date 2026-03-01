@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import api from '../api/axios';
+import { perfumesApi } from '@/api';
 import { Button } from '@/components/ui/button';
 import { Star } from 'lucide-react';
 
@@ -23,8 +23,8 @@ export default function ReviewForm({ perfumeId, isLoggedIn, hasReviewed, onRevie
     setError('');
     setSuccess('');
     try {
-      const res = await api.post(`/perfumes/${perfumeId}/comments`, { rating, content });
-      setSuccess(res.data.message);
+      const res = await perfumesApi.addComment(perfumeId, { rating, content });
+      setSuccess(res.message);
       setContent('');
       onReviewSubmitted();
     } catch (err: unknown) {

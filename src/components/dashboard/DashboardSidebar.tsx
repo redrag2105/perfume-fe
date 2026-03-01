@@ -1,7 +1,7 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Users, Building2, Droplet, LayoutDashboard, ChevronLeft, LogOut, PanelLeftClose, PanelLeft, Moon, Sun } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/components/theme-provider';
+import SignOutDialog from '@/components/SignOutDialog';
 import type { DashboardTab } from './types';
 import { cn } from '@/lib/utils';
 
@@ -33,14 +33,7 @@ export default function DashboardSidebar({
   onToggleCollapse 
 }: DashboardSidebarProps) {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { logout } = useAuth();
   const { theme, setTheme } = useTheme();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -193,22 +186,26 @@ export default function DashboardSidebar({
         </button>
         
         {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className={cn(
-            "w-full flex items-center text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors cursor-pointer whitespace-nowrap",
-            isCollapsed ? "justify-center px-2 py-3" : "gap-2 px-4 py-3"
-          )}
-          title={isCollapsed ? "Sign Out" : undefined}
-        >
-          <LogOut size={14} strokeWidth={1.5} className="shrink-0" />
-          <span className={cn(
-            "text-[10px] tracking-[0.15em] uppercase transition-all duration-300",
-            isCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
-          )}>
-            Sign Out
-          </span>
-        </button>
+        <SignOutDialog
+          darkMode
+          trigger={
+            <button
+              className={cn(
+                "w-full flex items-center text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors cursor-pointer whitespace-nowrap",
+                isCollapsed ? "justify-center px-2 py-3" : "gap-2 px-4 py-3"
+              )}
+              title={isCollapsed ? "Sign Out" : undefined}
+            >
+              <LogOut size={14} strokeWidth={1.5} className="shrink-0" />
+              <span className={cn(
+                "text-[10px] tracking-[0.15em] uppercase transition-all duration-300",
+                isCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
+              )}>
+                Sign Out
+              </span>
+            </button>
+          }
+        />
       </div>
 
       {/* Decorative Footer */}

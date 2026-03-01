@@ -1,32 +1,14 @@
 import { useEffect, useState } from 'react';
-import api from '../api/axios';
-import ProductCard from '../components/ProductCard';
-import SearchFilter from '../components/SearchFilter';
+import { perfumesApi, brandsApi } from '@/api';
+import type { PerfumeListItem, PaginationInfo } from '@/types';
+import ProductCard from '@/components/ProductCard';
+import SearchFilter from '@/components/SearchFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
-interface Perfume {
-  _id: string;
-  perfumeName: string;
-  uri: string;
-  targetAudience: string;
-  brandName: string;
-  concentration?: string;
-  price?: number;
-}
-
-interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  totalCount: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-}
-
 export default function Home() {
-  const [perfumes, setPerfumes] = useState<Perfume[]>([]);
+  const [perfumes, setPerfumes] = useState<PerfumeListItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchedTerm, setSearchedTerm] = useState(''); // Tracks actually performed search
   const [brandFilter, setBrandFilter] = useState('');
@@ -45,21 +27,19 @@ export default function Home() {
   const fetchPerfumes = async (page = 1, search = '', brand = '') => {
     try {
       setIsLoading(true);
-      const params = new URLSearchParams();
-      params.append('page', String(page));
-      params.append('limit', '12');
-      if (search) params.append('search', search);
-      if (brand) params.append('brandName', brand);
-
-      const res = await api.get(`/perfumes?${params.toString()}`);
-      setPerfumes(res.data.perfumes);
-      setPagination(res.data.pagination);
+      const data = await perfumesApi.getAll({
+        page,
+        limit: 12,
+        search: search || undefined,
+        brandName: brand || undefined,
+      });
+      setPerfumes(data.perfumes);
+      setPagination(data.pagination);
       
       // Extract brands from the response for filtering
       if (page === 1 && !search && !brand) {
-        // Fetch all to get brands (or we could create a separate endpoint)
-        const allBrandsRes = await api.get('/brands');
-        const brands = allBrandsRes.data.map((b: { brandName: string }) => b.brandName);
+        const brandsData = await brandsApi.getAll();
+        const brands = brandsData.map(b => b.brandName);
         setAvailableBrands(brands);
       }
     } catch (error) {

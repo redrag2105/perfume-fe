@@ -1,6 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { X, Shield } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
+import SignOutDialog from '@/components/SignOutDialog';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -8,14 +9,7 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-    onClose();
-    navigate('/');
-  };
+  const { user } = useAuth();
 
   return (
     <>
@@ -79,12 +73,16 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   >
                     {user.isAdmin ? 'Dashboard' : 'Your Profile'}
                   </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                  >
-                    Sign Out
-                  </button>
+                  <SignOutDialog
+                    trigger={
+                      <button
+                        className="block text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                      >
+                        Sign Out
+                      </button>
+                    }
+                    onSignOut={onClose}
+                  />
                 </>
               ) : (
                 <>

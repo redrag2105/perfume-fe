@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../hooks/useAuth';
-import api from '../api/axios';
+import { useAuth } from '@/hooks/useAuth';
+import { membersApi } from '@/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
@@ -26,11 +26,11 @@ export default function Profile() {
     if (!user) return;
     const fetchProfile = async () => {
       try {
-        const res = await api.get('/members/profile');
+        const profile = await membersApi.getProfile();
         setProfileData({
-          name: res.data.name || '',
-          YOB: res.data.YOB?.toString() || '',
-          gender: res.data.gender === false ? 'false' : 'true',
+          name: profile.name || '',
+          YOB: profile.YOB?.toString() || '',
+          gender: profile.gender === false ? 'false' : 'true',
         });
       } catch (error) {
         console.error("Error fetching profile", error);
@@ -46,7 +46,7 @@ export default function Profile() {
     e.preventDefault();
     setProfileMsg({ type: '', text: '' });
     try {
-      await api.put('/members/profile', {
+      await membersApi.updateProfile({
         name: profileData.name,
         YOB: parseInt(profileData.YOB),
         gender: profileData.gender === 'true'
@@ -66,7 +66,7 @@ export default function Profile() {
     e.preventDefault();
     setPassMsg({ type: '', text: '' });
     try {
-      await api.put('/members/password', passData);
+      await membersApi.changePassword(passData);
       setPassMsg({ type: 'success', text: 'Password changed successfully.' });
       setPassData({ oldPassword: '', newPassword: '' }); // Clear form
     } catch (err: unknown) {

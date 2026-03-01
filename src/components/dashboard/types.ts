@@ -1,6 +1,19 @@
 import { z } from 'zod';
 
-// Zod validation schemas
+// Re-export types from centralized location
+export type { 
+  Member, 
+  Brand, 
+  Perfume, 
+  PerfumeFormData,
+  DeleteDialogState,
+  DashboardTab,
+} from '@/types';
+
+// Re-export constants
+export { initialPerfumeForm } from '@/constants';
+
+// Zod validation schemas (keep here as they're dashboard-specific)
 export const perfumeSchema = z.object({
   perfumeName: z.string().min(1, 'Fragrance name is required'),
   uri: z.string().url('Image URL must be a valid URL'),
@@ -16,66 +29,3 @@ export const perfumeSchema = z.object({
 export const brandSchema = z.object({
   brandName: z.string().min(2, 'Brand name must be at least 2 characters'),
 });
-
-// TypeScript Interfaces
-export interface Member {
-  _id: string;
-  name: string;
-  email: string;
-  YOB: number;
-  gender: boolean;
-  isAdmin: boolean;
-}
-
-export interface Brand {
-  _id: string;
-  brandName: string;
-}
-
-export interface Perfume {
-  _id: string;
-  perfumeName: string;
-  name: string;
-  brandName: string;
-  brand: { _id: string; brandName: string } | string;
-  price: number;
-  volume: number;
-  concentration: string;
-  description: string;
-  ingredients: string;
-  targetAudience: string;
-  uri: string;
-}
-
-export type PerfumeFormData = {
-  perfumeName: string;
-  uri: string;
-  price: string;
-  concentration: string;
-  description: string;
-  ingredients: string;
-  volume: string;
-  targetAudience: string;
-  brand: string;
-};
-
-export const initialPerfumeForm: PerfumeFormData = {
-  perfumeName: '',
-  uri: '',
-  price: '',
-  concentration: 'EDP',
-  description: '',
-  ingredients: '',
-  volume: '',
-  targetAudience: 'unisex',
-  brand: '',
-};
-
-export type DeleteDialogState = {
-  open: boolean;
-  type: 'brand' | 'perfume';
-  id: string;
-  name: string;
-};
-
-export type DashboardTab = 'members' | 'brands' | 'perfumes';

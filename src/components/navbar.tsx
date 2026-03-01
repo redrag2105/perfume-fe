@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { Menu, X } from 'lucide-react';
 import NavLink from './NavLink';
 import UserDropdown from './UserDropdown';

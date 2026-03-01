@@ -1,29 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import api from '@/api/axios';
+import { membersApi, brandsApi, perfumesApi } from '@/api';
 import { toast } from 'sonner';
-import type { Member, Brand, Perfume, PerfumeFormData, DashboardTab } from '@/components/dashboard';
-
-interface DashboardStats {
-  membersCount: number;
-  brandsCount: number;
-  perfumesCount: number;
-  activeClientsCount: number;
-}
-
-interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  totalCount: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-}
-
-interface LoadingStates {
-  members: boolean;
-  brands: boolean;
-  perfumes: boolean;
-}
+import type { 
+  Member, 
+  Brand, 
+  Perfume, 
+  PerfumeFormData, 
+  DashboardTab,
+  DashboardStats,
+  PaginationInfo,
+  LoadingStates,
+} from '@/types';
 
 export function useDashboardData(isAdmin: boolean) {
   // Data States
@@ -64,8 +51,8 @@ export function useDashboardData(isAdmin: boolean) {
   const fetchStats = useCallback(async () => {
     try {
       setStatsLoading(true);
-      const res = await api.get('/collectors/stats');
-      setStats(res.data);
+      const data = await membersApi.getStats();
+      setStats(data);
     } catch (error) {
       console.error('Error fetching stats:', error);
     } finally {
@@ -77,8 +64,8 @@ export function useDashboardData(isAdmin: boolean) {
   const fetchMembers = useCallback(async () => {
     try {
       setLoadingStates((prev) => ({ ...prev, members: true }));
-      const res = await api.get('/collectors');
-      setMembers(res.data);
+      const data = await membersApi.getAllMembers();
+      setMembers(data);
       loadedTabs.current.add('members');
     } catch (error) {
       console.error('Error fetching members:', error);
@@ -90,8 +77,8 @@ export function useDashboardData(isAdmin: boolean) {
   const fetchBrands = useCallback(async () => {
     try {
       setLoadingStates((prev) => ({ ...prev, brands: true }));
-      const res = await api.get('/brands');
-      setBrands(res.data);
+      const data = await brandsApi.getAll();
+      setBrands(data);
       loadedTabs.current.add('brands');
     } catch (error) {
       console.error('Error fetching brands:', error);
@@ -103,9 +90,9 @@ export function useDashboardData(isAdmin: boolean) {
   const fetchPerfumes = useCallback(async (page = 1) => {
     try {
       setLoadingStates((prev) => ({ ...prev, perfumes: true }));
-      const res = await api.get(`/perfumes?page=${page}&limit=10`);
-      setPerfumes(res.data.perfumes);
-      setPerfumesPagination(res.data.pagination);
+      const data = await perfumesApi.getForAdmin(page, 10);
+      setPerfumes(data.perfumes);
+      setPerfumesPagination(data.pagination);
       loadedTabs.current.add('perfumes');
     } catch (error) {
       console.error('Error fetching perfumes:', error);
@@ -149,10 +136,10 @@ export function useDashboardData(isAdmin: boolean) {
   // --- BRAND CRUD ---
   const handleBrandSubmit = useCallback(async (brandName: string, editingBrand: Brand | null) => {
     if (editingBrand) {
-      await api.put(`/brands/${editingBrand._id}`, { brandName });
+      await brandsApi.update(editingBrand._id, { brandName });
       toast.success('Maison updated successfully.');
     } else {
-      await api.post('/brands', { brandName });
+      await brandsApi.create({ brandName });
       toast.success('Maison added to registry.');
     }
     fetchBrands();
@@ -162,8 +149,8 @@ export function useDashboardData(isAdmin: boolean) {
   // --- PERFUME CRUD ---
   const fetchPerfumeDetails = useCallback(async (perfumeId: string): Promise<Perfume | null> => {
     try {
-      const res = await api.get(`/perfumes/${perfumeId}`);
-      return res.data;
+      const data = await perfumesApi.getById(perfumeId);
+      return data as Perfume;
     } catch (error) {
       console.error('Error fetching perfume details:', error);
       toast.error('Failed to load perfume details');
@@ -185,10 +172,10 @@ export function useDashboardData(isAdmin: boolean) {
     };
 
     if (editingPerfume) {
-      await api.put(`/perfumes/${editingPerfume._id}`, payload);
+      await perfumesApi.update(editingPerfume._id, payload);
       toast.success('Fragrance updated successfully.');
     } else {
-      await api.post('/perfumes', payload);
+      await perfumesApi.create(payload);
       toast.success('Fragrance added to collection.');
     }
     fetchPerfumes(perfumesPagination.currentPage);
@@ -199,11 +186,11 @@ export function useDashboardData(isAdmin: boolean) {
   const handleDelete = useCallback(async (type: 'brand' | 'perfume', id: string): Promise<boolean> => {
     try {
       if (type === 'brand') {
-        await api.delete(`/brands/${id}`);
+        await brandsApi.delete(id);
         setBrands((prev) => prev.filter((b) => b._id !== id));
         toast.success('Maison removed from registry.');
       } else {
-        await api.delete(`/perfumes/${id}`);
+        await perfumesApi.delete(id);
         setPerfumes((prev) => prev.filter((p) => p._id !== id));
         toast.success('Fragrance removed from collection.');
       }

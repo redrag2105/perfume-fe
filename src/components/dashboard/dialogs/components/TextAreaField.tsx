@@ -5,6 +5,7 @@ interface TextAreaFieldProps {
   placeholder?: string;
   rows?: number;
   fullWidth?: boolean;
+  error?: string | false;
 }
 
 export default function TextAreaField({
@@ -14,6 +15,7 @@ export default function TextAreaField({
   placeholder,
   rows = 3,
   fullWidth = false,
+  error,
 }: TextAreaFieldProps) {
   return (
     <div className={fullWidth ? 'md:col-span-2' : ''}>
@@ -25,8 +27,11 @@ export default function TextAreaField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 placeholder:text-gray-300 dark:placeholder:text-gray-600 focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-colors resize-none"
+        className={`w-full px-4 py-3 border text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 placeholder:text-gray-300 dark:placeholder:text-gray-600 focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 transition-colors resize-none ${
+          error ? 'border-red-400' : 'border-gray-200 dark:border-gray-700'
+        }`}
       />
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   );
 }

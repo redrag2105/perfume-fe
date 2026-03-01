@@ -2,8 +2,9 @@ import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
-import { useAuth } from '../hooks/useAuth';
-import api from '../api/axios';
+import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
+import { authApi } from '@/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
@@ -35,8 +36,9 @@ export default function Login() {
     setError('');
     setIsSubmitting(true);
     try {
-      const res = await api.post('/auth/login', { email, password });
-      login(res.data.accessToken);
+      const res = await authApi.login({ email, password });
+      login(res.accessToken);
+      toast.success('Welcome back to Maison Aura');
       navigate('/');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -53,10 +55,11 @@ export default function Login() {
     setError('');
     setIsSubmitting(true);
     try {
-      const res = await api.post('/auth/google', { 
-        credential: credentialResponse.credential 
+      const res = await authApi.googleLogin({ 
+        credential: credentialResponse.credential! 
       });
-      login(res.data.accessToken);
+      login(res.accessToken);
+      toast.success('Welcome back to Maison Aura');
       navigate('/');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -82,12 +85,12 @@ export default function Login() {
       <div className="w-full max-w-sm space-y-8">
         
         {/* Header */}
-        <div className="space-y-2 text-center">
+        <div className="space-y-2 text-center animate-slide-up">
           <h1 className="text-4xl font-serif tracking-tight text-primary">Sign In</h1>
           <p className="text-sm text-muted-foreground tracking-wide">Enter your details to proceed.</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6 mt-8">
+        <form onSubmit={handleLogin} className="space-y-6 mt-8 animate-slide-up animate-delay-200">
           {error && (
             <div className="p-3 text-xs tracking-wide text-center text-red-800 bg-red-50 border border-red-100">
               {error}

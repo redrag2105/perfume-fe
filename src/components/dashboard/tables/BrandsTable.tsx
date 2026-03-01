@@ -1,6 +1,6 @@
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Brand } from '../types';
+import type { Brand } from '@/components/dashboard/types';
 
 interface BrandsTableProps {
   brands: Brand[];
