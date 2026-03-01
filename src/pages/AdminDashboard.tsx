@@ -132,7 +132,7 @@ export default function AdminDashboard() {
 
   return (
     <div className={cn(
-      "h-screen overflow-y-auto bg-[#FAFAFA] dark:bg-gray-950 transition-colors duration-300",
+      "h-screen overflow-y-auto bg-[#FAFAFA] dark:bg-[#0A0A0A] transition-colors duration-300",
       isDark && "dark"
     )}>
       {/* Sidebar */}

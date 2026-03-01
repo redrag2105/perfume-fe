@@ -75,7 +75,7 @@ export default function BrandDialog({ open, onClose, onSubmit, editingBrand }: B
       />
 
       {/* Dialog */}
-      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative bg-white dark:bg-[#0A0A0A] w-full max-w-md mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-800">
           <h2 className="text-lg font-serif text-gray-900 dark:text-white">

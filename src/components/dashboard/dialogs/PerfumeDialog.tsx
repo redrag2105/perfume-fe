@@ -116,7 +116,7 @@ export default function PerfumeDialog({ open, onClose, onSubmit, editingPerfume,
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
       {/* Dialog */}
-      <div className="relative bg-white dark:bg-gray-900 w-full max-w-3xl mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative bg-white dark:bg-[#0A0A0A] w-full max-w-3xl mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-800">
           <h2 className="text-lg font-serif text-gray-900 dark:text-white">
@@ -224,7 +224,7 @@ export default function PerfumeDialog({ open, onClose, onSubmit, editingPerfume,
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-800">
             <div>
               {editingPerfume && (
-                <span className={`text-[10px] tracking-wide ${hasChanges ? 'text-[#D4AF37] dark:text-[#FFD700]' : 'text-gray-300 dark:text-gray-600'}`}>
+                <span className={`text-[10px] tracking-wide ${hasChanges ? 'text-[#C9A86C]' : 'text-gray-300 dark:text-gray-600'}`}>
                   {hasChanges ? 'Unsaved changes' : 'No changes'}
                 </span>
               )}

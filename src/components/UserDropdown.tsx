@@ -1,10 +1,15 @@
 import { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, Shield } from 'lucide-react';
+import { User, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import SignOutDialog from '@/components/SignOutDialog';
+import { cn } from '@/lib/utils';
 
-export default function UserDropdown() {
+interface UserDropdownProps {
+  isExpanded?: boolean;
+}
+
+export default function UserDropdown({ isExpanded = false }: UserDropdownProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -22,53 +27,55 @@ export default function UserDropdown() {
   const getDisplayName = () => {
     if (!user?.name) return 'Account';
     const firstName = user.name.split(' ')[0];
-    return firstName.length > 12 ? firstName.slice(0, 12) + '...' : firstName;
+    return firstName.length > 10 ? firstName.slice(0, 10) + '...' : firstName;
   };
 
   if (!user) return null;
 
   return (
     <div className="relative" ref={menuRef}>
+      {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-1.5 text-[11px] tracking-[0.2em] uppercase transition-colors cursor-pointer font-semibold ${
-          user.isAdmin ? 'text-[#224470] hover:text-[#12345d]' : 'text-[#B8860B] hover:text-[#977317]'
-        }`}
+        className={cn(
+          "w-full flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-600 cursor-pointer",
+          user.isAdmin 
+            ? "text-amber-400/70 hover:text-amber-400 hover:bg-amber-400/10" 
+            : "text-white/50 hover:text-white hover:bg-white/5"
+        )}
       >
-        {user.isAdmin && <Shield size={12} strokeWidth={1.5} className="mr-0.5" />}
-        <span>{getDisplayName()}</span>
-        <ChevronDown
-          size={12}
-          strokeWidth={1.5}
-          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-        />
+        {user.isAdmin ? (
+          <Shield size={18} strokeWidth={1.5} className="shrink-0" />
+        ) : (
+          <User size={18} strokeWidth={1.5} className="shrink-0" />
+        )}
+        <span className={cn(
+          "text-xs tracking-[0.2em] uppercase font-medium whitespace-nowrap transition-all duration-300",
+          isExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
+        )}>
+          {getDisplayName()}
+        </span>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - Opens Upward, positioned outside sidebar */}
       <div
-        className={`absolute right-0 top-full mt-3 w-44 bg-white border border-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.1)] transition-all duration-200 origin-top-right ${
-          isOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
-        }`}
+        className={cn(
+          "fixed bottom-20 left-4 w-48 bg-[#1A1A1A] backdrop-blur-xl rounded-xl border border-white/10 transition-all duration-300 origin-bottom-left overflow-hidden z-60",
+          isOpen ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible"
+        )}
       >
-        {/* Decorative top line */}
-        <span
-          className={`absolute -top-px left-1/2 -translate-x-1/2 h-px bg-black/35 transition-all duration-300 ease-out ${
-            isOpen ? 'w-[calc(100%-2rem)]' : 'w-0'
-          }`}
-        />
-
         <div className="py-2">
           <Link
             to={user.isAdmin ? '/admin' : '/profile'}
             onClick={() => setIsOpen(false)}
-            className="block px-4 py-2.5 text-xs tracking-wide text-gray-600 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+            className="block px-4 py-3 text-xs tracking-wide text-white/70 hover:text-white hover:bg-white/5 transition-colors duration-300"
           >
-            {user.isAdmin ? 'Dashboard' : 'Your Profile'}
+            {user.isAdmin ? 'Dashboard' : 'Profile'}
           </Link>
           <SignOutDialog
             trigger={
               <button
-                className="w-full text-left px-4 py-2.5 text-xs tracking-wide text-gray-600 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+                className="w-full text-left px-4 py-3 text-xs tracking-wide text-red-400/70 hover:text-red-400 hover:bg-red-400/5 transition-colors duration-300 cursor-pointer"
               >
                 Sign Out
               </button>

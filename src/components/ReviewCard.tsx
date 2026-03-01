@@ -12,17 +12,23 @@ interface ReviewCardProps {
 
 export default function ReviewCard({ comment }: ReviewCardProps) {
   return (
-    <div className="border-b border-gray-100 pb-8 transition-all duration-300 hover:pl-2 hover:border-l-2 hover:border-l-gray-200">
-      <div className="flex justify-between items-center mb-3">
-        <p className="text-sm font-semibold tracking-wide">{comment.author?.name || 'Anonymous Client'}</p>
-        <div className="flex text-[#D4AF37]">
-          {[...Array(comment.rating)].map((_, i) => (
-            <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
+    <div className="border-b border-neutral-200 pb-8 group">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+        <p className="text-xs tracking-[0.15em] uppercase text-black font-medium">{comment.author?.name || 'Anonymous'}</p>
+        <div className="flex text-black">
+          {[...Array(3)].map((_, i) => (
+            <Star 
+              key={i} 
+              size={12} 
+              fill={i < comment.rating ? "currentColor" : "none"} 
+              strokeWidth={i < comment.rating ? 0 : 1}
+              className={i < comment.rating ? '' : 'text-neutral-300'}
+            />
           ))}
         </div>
       </div>
-      <p className="text-sm text-gray-600 leading-relaxed font-light italic">"{comment.content}"</p>
-      <p className="text-xs text-gray-400 mt-4">
+      <p className="text-sm text-neutral-600 leading-relaxed">"{comment.content}"</p>
+      <p className="text-[10px] tracking-widest uppercase text-neutral-400 mt-4">
         {new Date(comment.createdAt).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',

@@ -37,10 +37,10 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`sticky top-0 z-50 bg-white border-b transition-all duration-500 ease-out ${
+      <nav className={`sticky top-0 z-50 transition-all duration-700 ease-out ${
         scrolled 
-          ? 'border-transparent shadow-[0_1px_3px_rgba(0,0,0,0.08)]' 
-          : 'border-gray-100 shadow-none'
+          ? 'bg-white/95 backdrop-blur-md shadow-[0_2px_20px_rgba(201,168,108,0.08)] border-b border-[#E8DDD6]/50' 
+          : 'bg-[#FDFAF7] border-b border-[#E8DDD6]/30'
       }`}>
         <div className="container mx-auto px-6">
           <div className="h-16 md:h-20 flex items-center justify-between">
@@ -64,9 +64,9 @@ export default function Navbar() {
             <div className="flex-1 flex justify-center">
               <Link 
                 to="/" 
-                className="text-2xl md:text-3xl font-serif tracking-tight text-primary hover:opacity-80 transition-opacity"
+                className="text-2xl md:text-3xl font-serif tracking-wide text-[#8B7355] hover:text-[#C9A86C] transition-colors duration-300"
               >
-                AURA
+                Pétale
               </Link>
             </div>
 

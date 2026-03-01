@@ -12,7 +12,7 @@ interface SignOutDialogProps {
   darkMode?: boolean;
 }
 
-export default function SignOutDialog({ trigger, onSignOut, darkMode = false }: SignOutDialogProps) {
+export default function SignOutDialog({ trigger, onSignOut, darkMode }: SignOutDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();

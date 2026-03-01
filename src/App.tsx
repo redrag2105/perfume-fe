@@ -6,8 +6,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Navbar from './components/navbar';
-import Footer from './components/footer';
+import SideNav from './components/SideNav';
 import PerfumeDetail from './pages/PerfumeDetail';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
@@ -17,29 +16,40 @@ import NotFound from './pages/NotFound';
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isAdminRoute = location.pathname === '/admin';
+  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
 
+  // Admin dashboard has its own layout
   if (isAdminRoute) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col font-sans transition-colors duration-300">
+      <div className="min-h-screen bg-white dark:bg-[#0A0A0A] flex flex-col font-sans transition-colors duration-300">
         {children}
       </div>
     );
   }
 
+  // Auth pages - full screen, no side nav
+  if (isAuthRoute) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] font-sans">
+        {children}
+      </div>
+    );
+  }
+
+  // Main layout with side navigation
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col font-sans transition-colors duration-300">
-      <Navbar />
-      <main className="flex-1">
+    <div className="min-h-screen bg-[#FAFAFA] font-sans">
+      <SideNav />
+      <main className="md:ml-20 min-h-screen">
         {children}
       </main>
-      <Footer />
     </div>
   );
 };
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="aura-theme">
+    <ThemeProvider defaultTheme="light" storageKey="petale-theme">
       <BrowserRouter>
         <AuthProvider>
           <ScrollToTop />

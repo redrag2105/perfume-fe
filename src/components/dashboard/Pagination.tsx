@@ -23,7 +23,7 @@ export default function Pagination({ pagination, onPageChange, itemLabel = 'item
   const endItem = Math.min(pagination.currentPage * pagination.limit, pagination.totalCount);
 
   return (
-    <div className="mt-6 flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 px-6 py-4">
+    <div className="mt-6 flex items-center justify-between bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-gray-800 px-6 py-4">
       <p className="text-xs text-gray-500 dark:text-gray-400">
         Showing {startItem} to {endItem} of {pagination.totalCount} {itemLabel}
       </p>

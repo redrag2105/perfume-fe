@@ -26,7 +26,7 @@ export default function DashboardHeader({ activeTab, searchQuery, onSearchChange
   const config = tabConfig[activeTab];
 
   return (
-    <header className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
+    <header className="sticky top-0 z-10 bg-white dark:bg-[#0A0A0A] border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
       <div className="px-8 py-5 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-serif text-gray-900 dark:text-white">
@@ -54,7 +54,7 @@ export default function DashboardHeader({ activeTab, searchQuery, onSearchChange
           </div>
           {/* Admin Badge */}
           <div className="h-6 w-px bg-gray-200 dark:bg-gray-700" />
-          <span className="text-[9px] tracking-[0.2em] uppercase text-[#D4AF37] font-medium">
+          <span className="text-[9px] tracking-[0.2em] uppercase text-[#C9A86C] font-medium">
             Admin
           </span>
         </div>

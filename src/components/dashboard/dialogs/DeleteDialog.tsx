@@ -29,7 +29,6 @@ export default function DeleteDialog({ state, onClose, onConfirm, isDeleting }: 
       isLoading={isDeleting}
       loadingLabel="Deleting..."
       variant="danger"
-      darkMode
     />
   );
 }

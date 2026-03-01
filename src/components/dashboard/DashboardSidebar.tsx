@@ -41,7 +41,7 @@ export default function DashboardSidebar({
 
   return (
     <aside className={cn(
-      "fixed z-20 left-0 top-0 h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col transition-all duration-600 ease-in-out",
+      "fixed z-20 left-0 top-0 h-screen bg-white dark:bg-[#0A0A0A] border-r border-gray-100 dark:border-gray-800 flex flex-col transition-all duration-600 ease-in-out",
       isCollapsed ? "w-16" : "w-64"
     )}>
       {/* Logo Section */}
@@ -53,7 +53,7 @@ export default function DashboardSidebar({
             isCollapsed ? "text-lg" : "text-2xl"
           )}
         >
-          {isCollapsed ? "A" : "AURA"}
+          {isCollapsed ? "P" : "Pétale"}
         </Link>
         {/* Collapse Toggle Button */}
         <button
@@ -77,9 +77,9 @@ export default function DashboardSidebar({
           "flex items-center whitespace-nowrap",
           isCollapsed ? "justify-center" : "gap-2"
         )}>
-          <LayoutDashboard size={14} className="text-[#D4AF37] dark:text-[#FFD700] shrink-0" strokeWidth={1.5} />
+          <LayoutDashboard size={14} className="text-[#C9A86C] shrink-0" strokeWidth={1.5} />
           <span className={cn(
-            "text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] dark:text-[#FFD700] font-medium transition-all duration-500",
+            "text-[10px] tracking-[0.2em] uppercase text-[#C9A86C] font-medium transition-all duration-500",
             isCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
           )}>
             Administration
@@ -116,7 +116,7 @@ export default function DashboardSidebar({
                 <item.icon 
                   size={16} 
                   strokeWidth={1.5} 
-                  className={cn("shrink-0", isActive ? 'text-[#c7961a] dark:text-[#8B6914]' : 'text-gray-400 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200')} 
+                  className={cn("shrink-0", isActive ? 'text-[#C9A86C]' : 'text-gray-400 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200')} 
                 />
                 <span className={cn(
                   "text-xs tracking-widest uppercase font-medium transition-all duration-300",
@@ -187,7 +187,6 @@ export default function DashboardSidebar({
         
         {/* Logout Button */}
         <SignOutDialog
-          darkMode
           trigger={
             <button
               className={cn(

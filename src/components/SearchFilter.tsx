@@ -4,7 +4,7 @@ import { Search, X, ChevronDown } from 'lucide-react';
 interface SearchFilterProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
-  searchedTerm: string; // The actually performed search
+  searchedTerm: string;
   brandFilter: string;
   availableBrands: string[];
   onBrandSelect: (brand: string) => void;
@@ -27,7 +27,6 @@ export default function SearchFilter({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -46,68 +45,74 @@ export default function SearchFilter({
   const hasActiveFilters = searchedTerm || brandFilter;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 mb-12 md:mb-16">
+    <div className="max-w-6xl mx-auto px-6 mb-16">
       <form
         onSubmit={onSearch}
-        className="flex flex-col md:flex-row gap-6 md:gap-8 justify-between items-stretch md:items-end border-b border-gray-200 pb-4"
+        className="flex flex-col md:flex-row gap-6 md:gap-12 justify-between items-stretch md:items-center"
       >
-        {/* Search Input */}
-        <div className="relative w-full md:w-1/2">
-          <button
-            type="submit"
-            className="absolute left-0 bottom-2.5 text-gray-400 hover:text-black transition-colors cursor-pointer"
-            aria-label="Search"
-          >
-            <Search size={16} strokeWidth={1.5} />
-          </button>
-          <input
-            type="text"
-            placeholder="Search fragrances..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-7 pb-2 text-sm bg-transparent border-0 focus:outline-none focus:ring-0 placeholder:text-gray-400 tracking-wide"
-          />
+        {/* Search Input - Editorial Style */}
+        <div className="relative flex-1 max-w-xl">
+          <div className="flex items-center border-b-2 border-black group focus-within:border-neutral-400 transition-colors">
+            <input
+              type="text"
+              placeholder="Search collection..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full py-3 text-sm bg-transparent border-0 focus:outline-none focus:ring-0 placeholder:text-neutral-400 text-black tracking-[0.05em] uppercase"
+            />
+            <button
+              type="submit"
+              className="p-2 text-black hover:opacity-50 transition-opacity cursor-pointer"
+              aria-label="Search"
+            >
+              <Search size={18} strokeWidth={1.5} />
+            </button>
+          </div>
         </div>
 
-        {/* Custom Filter Dropdown & Clear */}
-        <div className="w-full md:w-auto flex items-end gap-4">
-          <div className="relative flex-1 md:w-48" ref={dropdownRef}>
+        {/* Filter Dropdown & Clear */}
+        <div className="flex items-center gap-6">
+          <div className="relative" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-full flex items-center justify-between md:justify-end gap-2 pb-2 text-sm text-gray-600 hover:text-black transition-colors cursor-pointer tracking-wide"
+              className="flex items-center gap-3 py-3 px-5 text-xs uppercase tracking-[0.15em] border border-black text-black hover:bg-black hover:text-white transition-all duration-300 cursor-pointer"
             >
-              <span>{brandFilter || 'All Maisons'}</span>
+              <span>{brandFilter || 'All Brands'}</span>
               <ChevronDown
                 size={14}
-                strokeWidth={1.5}
-                className={`text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+                strokeWidth={2}
+                className={`transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
-            {/* Dropdown Menu */}
+            {/* Dropdown Menu - Editorial */}
             <div
-              className={`absolute right-0 top-full mt-2 w-full md:w-56 bg-white border border-gray-100 shadow-lg z-20 transition-all duration-200 origin-top ${
+              className={`absolute right-0 top-full mt-1 w-56 bg-[#FAFAFA] border border-neutral-300 z-100 shadow-xl transition-all duration-200 origin-top ${
                 dropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
               }`}
             >
-              <div className="py-1 max-h-64 overflow-y-auto">
+              <div className="max-h-64 overflow-y-auto">
                 <button
                   type="button"
                   onClick={() => handleBrandSelect('')}
-                  className={`w-full text-left px-4 py-2.5 text-sm tracking-wide transition-colors cursor-pointer ${
-                    !brandFilter ? 'text-black bg-gray-50' : 'text-gray-600 hover:text-black hover:bg-gray-50'
+                  className={`w-full text-left px-5 py-3 text-xs uppercase tracking-widest transition-colors cursor-pointer ${
+                    !brandFilter 
+                      ? 'bg-neutral-200 text-black font-medium' 
+                      : 'text-neutral-600 hover:bg-neutral-100 hover:text-black'
                   }`}
                 >
-                  All Maisons
+                  All Brands
                 </button>
                 {availableBrands.map((brand, idx) => (
                   <button
                     type="button"
                     key={idx}
                     onClick={() => handleBrandSelect(brand)}
-                    className={`w-full text-left px-4 py-2.5 text-sm tracking-wide transition-colors cursor-pointer ${
-                      brandFilter === brand ? 'text-black bg-gray-50' : 'text-gray-600 hover:text-black hover:bg-gray-50'
+                    className={`w-full text-left px-5 py-3 text-xs uppercase tracking-widest transition-colors cursor-pointer border-t border-neutral-200 ${
+                      brandFilter === brand 
+                        ? 'bg-neutral-200 text-black font-medium' 
+                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-black'
                     }`}
                   >
                     {brand}
@@ -121,25 +126,23 @@ export default function SearchFilter({
             <button
               type="button"
               onClick={onClearFilters}
-              className="pb-2 text-gray-400 hover:text-black transition-colors cursor-pointer"
+              className="p-2 text-black hover:opacity-50 transition-opacity cursor-pointer"
               title="Clear filters"
             >
-              <X size={16} strokeWidth={1.5} />
+              <X size={18} strokeWidth={1.5} />
             </button>
           )}
         </div>
 
-        <button type="submit" className="hidden">
-          Search
-        </button>
+        <button type="submit" className="hidden">Search</button>
       </form>
 
-      {/* Active filter indicator */}
+      {/* Results indicator */}
       {hasActiveFilters && (
-        <div className="mt-4 text-xs tracking-wide text-gray-500">
-          Showing {resultsCount} result{resultsCount !== 1 ? 's' : ''}
-          {searchedTerm && <span> for "{searchedTerm}"</span>}
-          {brandFilter && <span> from {brandFilter}</span>}
+        <div className="mt-6 text-xs tracking-widest uppercase text-neutral-500">
+          {resultsCount} result{resultsCount !== 1 ? 's' : ''}
+          {searchedTerm && <span className="text-black"> for "{searchedTerm}"</span>}
+          {brandFilter && <span className="text-black"> in {brandFilter}</span>}
         </div>
       )}
     </div>

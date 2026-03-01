@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { authApi } from '@/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { validateLoginForm, isLoginFormValid } from '@/lib/validation';
 
 export default function Login() {
@@ -24,7 +24,6 @@ export default function Login() {
   const errors = useMemo(() => validateLoginForm(email, password), [email, password]);
   const isFormValid = isLoginFormValid(errors);
 
-  // After first submit, button is disabled until form is valid
   const isButtonDisabled = isSubmitting || (hasSubmitted && !isFormValid);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -38,7 +37,7 @@ export default function Login() {
     try {
       const res = await authApi.login({ email, password });
       login(res.accessToken);
-      toast.success('Welcome back to Maison Aura');
+      toast.success('Welcome back to Pétale');
       navigate('/');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -59,7 +58,7 @@ export default function Login() {
         credential: credentialResponse.credential! 
       });
       login(res.accessToken);
-      toast.success('Welcome back to Maison Aura');
+      toast.success('Welcome back to Pétale');
       navigate('/');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -76,38 +75,49 @@ export default function Login() {
     setError('Google Sign-In was cancelled or failed.');
   };
 
-  // Show errors only after first submission
   const showEmailError = hasSubmitted && errors.email;
   const showPasswordError = hasSubmitted && errors.password;
 
   return (
-    <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center p-4 bg-white">
-      <div className="w-full max-w-sm space-y-8">
+    <div className="flex min-h-screen items-center justify-center p-6">
+      {/* Back to Home */}
+      <Link 
+        to="/" 
+        className="fixed top-8 left-8 group flex items-center gap-2 text-white/40 hover:text-white transition-colors duration-300 z-10"
+      >
+        <ArrowLeft size={16} strokeWidth={1.5} className="group-hover:-translate-x-1 transition-transform duration-300" />
+        <span className="text-xs tracking-[0.15em] uppercase">Back to Home</span>
+      </Link>
+
+      <div className="w-full max-w-md space-y-10">
         
-        {/* Header */}
-        <div className="space-y-2 text-center animate-slide-up">
-          <h1 className="text-4xl font-serif tracking-tight text-primary">Sign In</h1>
-          <p className="text-sm text-muted-foreground tracking-wide">Enter your details to proceed.</p>
+        {/* Header - Editorial */}
+        <div className="space-y-4 text-center animate-slide-up">
+          <Link to="/" className="inline-block">
+            <span className="text-3xl font-serif text-white tracking-tight">Pétale</span>
+          </Link>
+          <h1 className="text-5xl md:text-6xl font-serif text-white tracking-tight">Sign In</h1>
+          <p className="text-sm text-white/40 tracking-[0.15em] uppercase">Welcome back</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6 mt-8 animate-slide-up animate-delay-200">
+        <form onSubmit={handleLogin} className="space-y-8 animate-slide-up animate-delay-200">
           {error && (
-            <div className="p-3 text-xs tracking-wide text-center text-red-800 bg-red-50 border border-red-100">
+            <div className="p-4 text-xs tracking-wide text-center text-red-400 bg-red-950/30 border border-red-900/50">
               {error}
             </div>
           )}
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
               <Input 
                 type="email" 
                 placeholder="Email Address" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`h-12 px-0 border-0 border-b focus-visible:ring-0 rounded-none bg-transparent placeholder:text-gray-400 transition-colors ${showEmailError ? 'border-red-500 focus-visible:border-red-500' : 'border-gray-300 focus-visible:border-black'}`}
+                className={`h-14 px-0 border-0 border-b-2 focus-visible:ring-0 rounded-none bg-transparent placeholder:text-white/30 text-white text-sm tracking-wide transition-colors duration-300 ${showEmailError ? 'border-red-500 focus-visible:border-red-500' : 'border-white/20 focus-visible:border-white'}`}
               />
               {showEmailError && (
-                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                <p className="mt-2 text-xs text-red-400">{errors.email}</p>
               )}
             </div>
             
@@ -118,24 +128,24 @@ export default function Login() {
                   placeholder="Password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`h-12 px-0 pr-10 border-0 border-b focus-visible:ring-0 rounded-none bg-transparent placeholder:text-gray-400 transition-colors ${showPasswordError ? 'border-red-500 focus-visible:border-red-500' : 'border-gray-300 focus-visible:border-black'}`}
+                  className={`h-14 px-0 pr-12 border-0 border-b-2 focus-visible:ring-0 rounded-none bg-transparent placeholder:text-white/30 text-white text-sm tracking-wide transition-colors duration-300 ${showPasswordError ? 'border-red-500 focus-visible:border-red-500' : 'border-white/20 focus-visible:border-white'}`}
                 />
                 <button
                   type="button"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer transition-colors"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-white/40 hover:text-white focus:outline-none cursor-pointer transition-colors duration-300"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff size={18} strokeWidth={1.5} /> : <Eye size={18} strokeWidth={1.5} />}
+                  {showPassword ? <EyeOff size={20} strokeWidth={1.5} /> : <Eye size={20} strokeWidth={1.5} />}
                 </button>
               </div>
               {showPasswordError && (
-                <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                <p className="mt-2 text-xs text-red-400">{errors.password}</p>
               )}
             </div>
           </div>
 
           <Button 
-            className="w-full h-12 text-sm tracking-widest uppercase mt-4" 
+            className="w-full h-14 text-xs tracking-[0.2em] uppercase mt-6 bg-white text-black hover:bg-white/90 transition-all duration-300" 
             type="submit"
             disabled={isButtonDisabled}
           >
@@ -143,32 +153,32 @@ export default function Login() {
           </Button>
 
           {/* Divider */}
-          <div className="relative mt-6">
+          <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-200" />
+              <span className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-4 text-gray-400 tracking-widest">Or</span>
+              <span className="bg-[#0A0A0A] px-6 text-white/30 tracking-[0.2em]">Or</span>
             </div>
           </div>
 
           {/* Google Sign-In */}
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
-              theme="outline"
+              theme="filled_black"
               size="large"
-              width="350"
+              width="400"
               text="signin_with"
             />
           </div>
           
-          <div className="text-center mt-6">
-            <p className="text-sm text-gray-500">
-              New to Aura?{' '}
-              <Link to="/register" className="text-black hover:text-gray-600 underline underline-offset-4 decoration-1 transition-colors">
-                Create an Account
+          <div className="text-center pt-4">
+            <p className="text-sm text-white/40">
+              New to Pétale?{' '}
+              <Link to="/register" className="text-white hover:opacity-60 underline underline-offset-4 decoration-1 transition-opacity duration-300">
+                Create Account
               </Link>
             </p>
           </div>

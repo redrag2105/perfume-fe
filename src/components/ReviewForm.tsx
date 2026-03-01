@@ -29,19 +29,19 @@ export default function ReviewForm({ perfumeId, isLoggedIn, hasReviewed, onRevie
       onReviewSubmitted();
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'Failed to submit feedback.');
+        setError(err.response?.data?.message || 'Failed to submit review.');
       } else {
-        setError('Failed to submit feedback.');
+        setError('Failed to submit review.');
       }
     }
   };
 
   if (!isLoggedIn) {
     return (
-      <div className="text-center space-y-4">
-        <p className="text-sm tracking-wide text-gray-500">You must be logged in to share your experience.</p>
+      <div className="text-center space-y-6">
+        <p className="text-sm text-neutral-500">Sign in to share your thoughts.</p>
         <Link to="/login">
-          <Button variant="outline" className="rounded-none border-black text-xs uppercase tracking-widest">
+          <Button variant="outline" className="border-2 border-black text-black text-xs uppercase tracking-[0.2em] px-10 py-3 hover:bg-black hover:text-white transition-all">
             Sign In
           </Button>
         </Link>
@@ -51,51 +51,51 @@ export default function ReviewForm({ perfumeId, isLoggedIn, hasReviewed, onRevie
 
   if (hasReviewed) {
     return (
-      <p className="text-center text-sm tracking-wide text-gray-500 italic">
-        Thank you. You have already shared your experience for this fragrance.
+      <p className="text-center text-sm text-neutral-500">
+        You have already reviewed this fragrance.
       </p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <h3 className="text-sm uppercase tracking-[0.2em] text-center mb-6">Share Your Experience</h3>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <h3 className="text-xs uppercase tracking-[0.2em] text-black text-center">Write a Review</h3>
 
-      {error && <p className="text-xs text-center text-red-600">{error}</p>}
-      {success && <p className="text-xs text-center text-[#D4AF37]">{success}</p>}
+      {error && <p className="text-xs text-center text-red-600 bg-red-50 p-3 border border-red-200">{error}</p>}
+      {success && <p className="text-xs text-center text-black bg-neutral-50 p-3 border border-neutral-200">{success}</p>}
 
-      <div className="space-y-2">
-        <label className="text-xs uppercase tracking-widest text-gray-500">Rating</label>
-        <div className="flex gap-2">
+      <div className="space-y-3">
+        <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Rating</label>
+        <div className="flex gap-1">
           {[1, 2, 3].map((num) => (
             <button
               type="button"
               key={num}
               onClick={() => setRating(num)}
-              className={`p-2 transition-colors cursor-pointer ${rating >= num ? 'text-[#D4AF37]' : 'text-gray-300'}`}
+              className={`p-2 transition-colors cursor-pointer ${rating >= num ? 'text-black' : 'text-neutral-300 hover:text-neutral-400'}`}
             >
-              <Star fill={rating >= num ? 'currentColor' : 'none'} size={24} strokeWidth={1} />
+              <Star fill={rating >= num ? 'currentColor' : 'none'} size={24} strokeWidth={1.5} />
             </button>
           ))}
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-xs uppercase tracking-widest text-gray-500">Your Thoughts</label>
+      <div className="space-y-3">
+        <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Your Review</label>
         <textarea
           required
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full p-4 border border-gray-200 focus:outline-none focus:border-black resize-none h-32 text-sm bg-transparent"
+          className="w-full p-4 border-2 border-neutral-200 focus:outline-none focus:border-black resize-none h-32 text-sm bg-white text-black placeholder:text-neutral-400 transition-colors"
           placeholder="Describe the scent, longevity, and your impressions..."
         />
       </div>
 
       <Button
         type="submit"
-        className="w-full rounded-none bg-black text-white text-xs tracking-[0.2em] uppercase h-12 hover:bg-gray-800"
+        className="w-full bg-black text-white text-xs tracking-[0.2em] uppercase h-14 hover:bg-black/80 transition-all"
       >
-        Submit Feedback
+        Submit Review
       </Button>
     </form>
   );

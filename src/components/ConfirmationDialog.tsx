@@ -1,4 +1,5 @@
 import { AlertTriangle, LogOut, type LucideIcon } from 'lucide-react';
+import { useTheme } from '@/components/theme-provider';
 
 export interface ConfirmationDialogProps {
   open: boolean;
@@ -54,15 +55,22 @@ export default function ConfirmationDialog({
   loadingLabel,
   variant = 'default',
   icon,
-  darkMode = false,
+  darkMode,
 }: ConfirmationDialogProps) {
+  const { theme } = useTheme();
+  
   if (!open) return null;
+
+  // If darkMode prop is explicitly set, use it; otherwise, use theme context
+  const isDark = darkMode !== undefined 
+    ? darkMode 
+    : theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const styles = variantStyles[variant];
   const Icon = icon || defaultIcons[variant];
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center ${darkMode ? 'dark' : ''}`} onClick={(e) => e.stopPropagation()}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${isDark ? 'dark' : ''}`} onClick={(e) => e.stopPropagation()}>
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -70,7 +78,7 @@ export default function ConfirmationDialog({
       />
 
       {/* Dialog */}
-      <div className="relative bg-white dark:bg-gray-900 w-full max-w-sm mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative bg-white dark:bg-[#0A0A0A] w-full max-w-sm mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         {/* Content */}
         <div className="p-6">
           {/* Icon */}
